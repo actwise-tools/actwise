@@ -1023,6 +1023,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2227,6 +2244,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2329,6 +2363,83 @@ and driven by the <a href="../../skills/actone-utils/">actone-utils</a> skill.</
 <tr>
 <td><code>doctor</code></td>
 <td>Show the effective config: backend, paths, JDK, <code>utilities.env</code>.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>For every argument and option of every sub-command, see the <a href="../full-reference/#actone-utils">full CLI reference</a>.</p>
+</blockquote>
+<h3 id="key-options">Key options<a class="headerlink" href="#key-options" title="Permanent link">&para;</a></h3>
+<p><strong><code>run</code></strong> — <a href="../full-reference/#actone-utils-run"><code>actone-utils run</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--set</code>, <code>-s</code></td>
+<td>Parameter as <code>KEY=VALUE</code> (repeatable).</td>
+</tr>
+<tr>
+<td><code>--arg</code>, <code>-a</code></td>
+<td>Raw arg appended verbatim (repeatable; for options not in the catalog).</td>
+</tr>
+<tr>
+<td><code>--dry-run</code> / <code>--execute</code></td>
+<td>Assemble only (default), or actually run.</td>
+</tr>
+<tr>
+<td><code>--yes</code></td>
+<td>Confirm a state-changing real run.</td>
+</tr>
+<tr>
+<td><code>--backend</code></td>
+<td>Override backend: <code>local</code> | <code>ssh</code> | <code>winrm</code> | <code>container</code>.</td>
+</tr>
+<tr>
+<td><code>--config</code></td>
+<td>Path to <code>actone-utils.yaml</code>.</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>Emit JSON.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>search</code></strong> — <a href="../full-reference/#actone-utils-search"><code>actone-utils search</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--limit</code></td>
+<td>Max results (default 25).</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>Emit JSON.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>describe</code></strong> — <a href="../full-reference/#actone-utils-describe"><code>actone-utils describe</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--json</code></td>
+<td>Emit JSON.</td>
 </tr>
 </tbody>
 </table>

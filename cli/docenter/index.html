@@ -939,6 +939,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2227,6 +2244,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2359,6 +2393,227 @@ data is bundled</strong>.</p>
 <tr>
 <td><code>index</code></td>
 <td>Generate the catalog taxonomy index (category → product → bundle).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>For every argument and option of every sub-command, see the <a href="../full-reference/#docenter">full CLI reference</a>.</p>
+</blockquote>
+<p>Several top-level commands are <strong>groups</strong> with their own sub-commands:</p>
+<p><strong><code>auth</code></strong> — Manage authentication with the Zoomin doc portal.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth login</code></td>
+<td>Login to the Zoomin doc portal via browser SSO (default).</td>
+</tr>
+<tr>
+<td><code>auth status</code></td>
+<td>Show current Zoomin authentication status and session expiry.</td>
+</tr>
+<tr>
+<td><code>auth logout</code></td>
+<td>Remove saved Zoomin session cookies.</td>
+</tr>
+<tr>
+<td><code>auth sharepoint login</code></td>
+<td>Open a browser for SharePoint SSO login and save session cookies.</td>
+</tr>
+<tr>
+<td><code>auth sharepoint status</code></td>
+<td>Show current SharePoint authentication status.</td>
+</tr>
+<tr>
+<td><code>auth sharepoint logout</code></td>
+<td>Remove saved SharePoint session cookies.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>sharepoint</code></strong> — Upload documents to SharePoint.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sharepoint upload</code></td>
+<td>Upload extracted docs to SharePoint.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>catalog</code></strong> — Manage the local <code>docs/catalog.yaml</code> product catalog.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>catalog refresh</code></td>
+<td>Rebuild <code>docs/catalog.yaml</code> from the live Zoomin API.</td>
+</tr>
+<tr>
+<td><code>catalog status</code></td>
+<td>Show local catalog metadata: when it was last refreshed and totals.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>skill</code></strong> — Maintain the <code>actimize-docenter</code> AI skill file.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>skill sync-reference</code></td>
+<td>Regenerate the Product Keys Reference table in the skill from the live catalog.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>wiki</code></strong> — Generate a deterministic, cross-linked documentation wiki from <code>raw_docs/</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wiki build</code></td>
+<td>Generate a navigable, citation-backed wiki under <code>wiki/</code> — purely from <code>raw_docs/</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>index</code></strong> — Generate the catalog taxonomy index (category → product → bundle).</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>index build</code></td>
+<td>Emit <code>raw_docs/index/</code> from the catalog — the taxonomy as data, not folders.</td>
+</tr>
+<tr>
+<td><code>index status</code></td>
+<td>Show whether <code>raw_docs/index/</code> exists and summarize its contents.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-options">Key options<a class="headerlink" href="#key-options" title="Permanent link">&para;</a></h3>
+<p>The flags below are the most useful ones for the flagship commands (taken verbatim from <code>--help</code>).</p>
+<p><strong><code>search</code></strong> — <a href="../full-reference/#docenter-search"><code>docenter search</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--local</code></td>
+<td>Search the local extracted corpus (<code>raw_docs/</code>) instead of the live portal — no auth needed.</td>
+</tr>
+<tr>
+<td><code>--product</code></td>
+<td>Filter by product key/name, e.g. <code>actone</code>, <code>ifm</code>, <code>sam</code>.</td>
+</tr>
+<tr>
+<td><code>--doc-version</code></td>
+<td>Filter by doc version, e.g. <code>10.1</code>.</td>
+</tr>
+<tr>
+<td><code>--guide</code></td>
+<td>Filter by guide type, e.g. <code>implementer</code> (online: post-filtered on bundle name).</td>
+</tr>
+<tr>
+<td><code>--max</code>, <code>-n</code></td>
+<td>Max results to display (default 10).</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>Output machine-readable JSON instead of a table.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>download</code></strong> — <a href="../full-reference/#docenter-download"><code>docenter download</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--format</code>, <code>-f</code></td>
+<td>Format: <code>md</code> or <code>pdf</code> (required).</td>
+</tr>
+<tr>
+<td><code>--version</code>, <code>-v</code></td>
+<td>Limit to a specific version, e.g. <code>10.1</code>.</td>
+</tr>
+<tr>
+<td><code>--bundle</code>, <code>-b</code></td>
+<td>Limit to a specific bundle name (partial match).</td>
+</tr>
+<tr>
+<td><code>--dry-run</code></td>
+<td>Show what would be downloaded without running.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>sync</code></strong> — <a href="../full-reference/#docenter-sync"><code>docenter sync</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--product</code>, <code>-p</code></td>
+<td>Sync one product (slug or alias).</td>
+</tr>
+<tr>
+<td><code>--category</code>, <code>-c</code></td>
+<td>Sync all products in a category (e.g. <code>aml</code>, <code>plt</code>, <code>ifm</code>).</td>
+</tr>
+<tr>
+<td><code>--since-last</code></td>
+<td>Only bundles updated since the last sync (<code>state.last_sync</code>).</td>
+</tr>
+<tr>
+<td><code>--dry-run</code></td>
+<td>Show the change set without downloading.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Re-extract in-scope bundles regardless of timestamp.</td>
+</tr>
+<tr>
+<td><code>--include-new</code></td>
+<td>Also download in-scope bundles not present locally (backfill).</td>
 </tr>
 </tbody>
 </table>

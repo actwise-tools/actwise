@@ -1079,6 +1079,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2227,6 +2244,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2316,6 +2350,103 @@ completes the chain <strong>docs → packages (<a href="../ndc/"><code>ndc</code
 <tr>
 <td><code>run</code></td>
 <td>Build the install command (dry-run) and, with <code>--execute</code>, run it behind a gate.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>For every argument and option of every sub-command, see the <a href="../full-reference/#actimize-installer">full CLI reference</a>.</p>
+</blockquote>
+<h3 id="key-options">Key options<a class="headerlink" href="#key-options" title="Permanent link">&para;</a></h3>
+<p><strong><code>run</code></strong> — <a href="../full-reference/#actimize-installer-run"><code>actimize-installer run</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--package</code>, <code>-P</code></td>
+<td>Extracted package dir (or <code>.zip</code>) (required).</td>
+</tr>
+<tr>
+<td><code>--command</code></td>
+<td><code>install</code> | <code>upgrade</code> | <code>show</code> (default: <code>install</code>).</td>
+</tr>
+<tr>
+<td><code>--mode</code></td>
+<td><code>full</code> | <code>sp</code> | <code>patch</code> (alias for <code>--command</code>).</td>
+</tr>
+<tr>
+<td><code>--include</code>, <code>-i</code></td>
+<td>Only this task/step (repeatable).</td>
+</tr>
+<tr>
+<td><code>--exclude</code>, <code>-x</code></td>
+<td>Exclude this task/step (repeatable).</td>
+</tr>
+<tr>
+<td><code>--execute</code></td>
+<td>Actually run (default: dry-run).</td>
+</tr>
+<tr>
+<td><code>--yes</code></td>
+<td>Skip the confirmation prompt (with <code>--execute</code>).</td>
+</tr>
+<tr>
+<td><code>--allow-prod</code></td>
+<td>Permit a prod-looking CONF.</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>Machine-readable plan output.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>detect</code></strong> — <a href="../full-reference/#actimize-installer-detect"><code>actimize-installer detect</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--package</code>, <code>-P</code></td>
+<td>Extracted package dir (or <code>.zip</code>) (required).</td>
+</tr>
+<tr>
+<td><code>--extract</code></td>
+<td>Extract if a <code>.zip</code> is given.</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>Machine-readable output.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>show</code></strong> — <a href="../full-reference/#actimize-installer-show"><code>actimize-installer show</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--package</code>, <code>-P</code></td>
+<td>Extracted package dir (or <code>.zip</code>) (required).</td>
+</tr>
+<tr>
+<td><code>--verbose</code>, <code>-V</code></td>
+<td>Show step detail.</td>
+</tr>
+<tr>
+<td><code>--extract</code></td>
+<td>Extract if a <code>.zip</code> is given.</td>
 </tr>
 </tbody>
 </table>

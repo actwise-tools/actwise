@@ -1051,6 +1051,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2227,6 +2244,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2340,6 +2374,138 @@ the <a href="../../skills/actimize-nicedl/">actimize-nicedl</a> skill. It sits u
 <tr>
 <td><code>catalog</code></td>
 <td>Build/inspect the offline package catalog cache.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>For every argument and option of every sub-command, see the <a href="../full-reference/#ndc">full CLI reference</a>.</p>
+</blockquote>
+<p>Two commands are <strong>groups</strong> with their own sub-commands:</p>
+<p><strong><code>auth</code></strong> — Authenticate to the NICE Download Center.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth login</code></td>
+<td>Log in using credentials from <code>.env</code> (<code>NDC_EMAIL</code> / <code>NDC_PASSWORD</code>) or <code>--email</code>/<code>--password</code>.</td>
+</tr>
+<tr>
+<td><code>auth status</code></td>
+<td>Show whether the stored session is still valid.</td>
+</tr>
+<tr>
+<td><code>auth logout</code></td>
+<td>Clear the stored session.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>catalog</code></strong> — Build/inspect the offline package catalog cache.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>catalog refresh</code></td>
+<td>Sweep the portal and (re)build the offline catalog cache.</td>
+</tr>
+<tr>
+<td><code>catalog status</code></td>
+<td>Show catalog freshness and per-product release counts.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-options">Key options<a class="headerlink" href="#key-options" title="Permanent link">&para;</a></h3>
+<p><strong><code>download</code></strong> — <a href="../full-reference/#ndc-download"><code>ndc download</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--plne</code></td>
+<td>Product-line id (from <code>search</code>).</td>
+</tr>
+<tr>
+<td><code>--cert-num</code></td>
+<td>Optional <code>cert_num</code> from <code>search</code>.</td>
+</tr>
+<tr>
+<td><code>--dest</code></td>
+<td>Destination directory (default: <code>packages</code>).</td>
+</tr>
+<tr>
+<td><code>--match</code></td>
+<td>Only files whose name contains this substring.</td>
+</tr>
+<tr>
+<td><code>--dry-run</code></td>
+<td>List what would be downloaded.</td>
+</tr>
+<tr>
+<td><code>--no-verify</code></td>
+<td>Skip MD5 verification.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>search</code></strong> — <a href="../full-reference/#ndc-search"><code>ndc search</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--product</code>, <code>-p</code></td>
+<td>Curated product key (see <code>ndc products</code>), e.g. <code>actone</code>.</td>
+</tr>
+<tr>
+<td><code>--variant</code></td>
+<td>Filter: <code>Full</code> | <code>SP</code> | <code>Patch</code>.</td>
+</tr>
+<tr>
+<td><code>--version</code></td>
+<td>Filter by version substring, e.g. <code>6.0</code>.</td>
+</tr>
+<tr>
+<td><code>--max</code></td>
+<td>Max rows (default 40).</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>find</code></strong> — <a href="../full-reference/#ndc-find"><code>ndc find</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--variant</code></td>
+<td><code>Full</code> | <code>SP</code> | <code>Patch</code>.</td>
+</tr>
+<tr>
+<td><code>--online</code></td>
+<td>Query the live portal instead of the cache.</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>Output machine-readable JSON.</td>
 </tr>
 </tbody>
 </table>

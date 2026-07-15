@@ -967,6 +967,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2227,6 +2244,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2330,6 +2364,165 @@ grounds the <a href="../../agents/ops/">ActWise Ops</a> Copilot Studio agent.</p
 <tr>
 <td><code>ops</code></td>
 <td>Spec-driven runtime ops over the ActOne Extend REST API (discovery: <code>search</code>/<code>describe</code>/<code>call</code>). Read-only in P1.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>For every argument and option of every sub-command, see the <a href="../full-reference/#actone">full CLI reference</a>.</p>
+</blockquote>
+<p><strong><code>ops</code></strong> is a command group — spec-driven runtime ops over the ActOne Extend REST API:</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ops search</code></td>
+<td>Find operations by keyword over operationId/summary/tags/path.</td>
+</tr>
+<tr>
+<td><code>ops describe</code></td>
+<td>Show full detail (params, body example, access) for one operationId.</td>
+</tr>
+<tr>
+<td><code>ops tags</code></td>
+<td>List operation tags (domains) and counts.</td>
+</tr>
+<tr>
+<td><code>ops list</code></td>
+<td>List ALL operations (no cap), optionally by tag or grouped.</td>
+</tr>
+<tr>
+<td><code>ops call</code></td>
+<td>Invoke an operation live. Reads always run; writes need <code>--allow-write</code>.</td>
+</tr>
+<tr>
+<td><code>ops env</code></td>
+<td>List configured ActOne environments (never shows passwords).</td>
+</tr>
+<tr>
+<td><code>ops version</code></td>
+<td>Login and report the detected ActOne version.</td>
+</tr>
+<tr>
+<td><code>ops sync-skill</code></td>
+<td>Regenerate the auto-generated domains table in <code>skills/actone-ops/SKILL.md</code> from the spec.</td>
+</tr>
+<tr>
+<td><code>ops soap</code></td>
+<td>Curated ActOne SOAP ops (admin surface the REST API lacks).</td>
+</tr>
+</tbody>
+</table>
+<p><code>ops soap</code> is itself a sub-group:</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ops soap list</code></td>
+<td>List the curated SOAP operations (offline).</td>
+</tr>
+<tr>
+<td><code>ops soap describe</code></td>
+<td>Show one SOAP op's service/operation/access/params.</td>
+</tr>
+<tr>
+<td><code>ops soap call</code></td>
+<td>Invoke a curated SOAP op. Reads always run; writes need <code>--allow-write</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-options">Key options<a class="headerlink" href="#key-options" title="Permanent link">&para;</a></h3>
+<p><strong><code>ops call</code></strong> — <a href="../full-reference/#actone-ops-call"><code>actone ops call</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--p</code></td>
+<td>Param as <code>key=value</code> (repeatable).</td>
+</tr>
+<tr>
+<td><code>--params</code></td>
+<td>All params as one JSON object.</td>
+</tr>
+<tr>
+<td><code>--body</code></td>
+<td>Request body as JSON.</td>
+</tr>
+<tr>
+<td><code>--env</code></td>
+<td>Named ActOne environment (see <code>actone ops env</code>).</td>
+</tr>
+<tr>
+<td><code>--url</code></td>
+<td>ActOne base URL (else <code>.env</code>).</td>
+</tr>
+<tr>
+<td><code>--allow-write</code></td>
+<td>Permit write ops (POST/PUT/DELETE/PATCH). Also honored via <code>ACTONE_ALLOW_WRITES=true</code>. Off by default (read-only gate).</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>ops search</code></strong> — <a href="../full-reference/#actone-ops-search"><code>actone ops search</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--limit</code>, <code>-n</code></td>
+<td>Max rows to show (default 25).</td>
+</tr>
+<tr>
+<td><code>--reads-only</code></td>
+<td>Only show read (GET) operations.</td>
+</tr>
+<tr>
+<td><code>--spec</code></td>
+<td>Spec path override (else cached/bundled).</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>generate</code></strong> — <a href="../full-reference/#actone-generate"><code>actone generate</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--spec</code></td>
+<td>OpenAPI spec (yaml or json).</td>
+</tr>
+<tr>
+<td><code>--version</code></td>
+<td>ActOne version label, e.g. <code>10.0.0.69_SP15</code>.</td>
+</tr>
+<tr>
+<td><code>--name</code></td>
+<td>Collection name (overrides default).</td>
+</tr>
+<tr>
+<td><code>--out</code></td>
+<td>Output collection path.</td>
 </tr>
 </tbody>
 </table>

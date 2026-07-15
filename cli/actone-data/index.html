@@ -995,6 +995,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2227,6 +2244,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2340,6 +2374,183 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 <tr>
 <td><code>docs</code></td>
 <td>Parse the <code>v_acm_*</code> doc pages (descriptions + FK graph).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>For every argument and option of every sub-command, see the <a href="../full-reference/#actone-data">full CLI reference</a>.</p>
+</blockquote>
+<p>Several commands are <strong>groups</strong> with their own sub-commands:</p>
+<p><strong><code>schema</code></strong> — Introspect the live ActOne schema (<code>v_acm_*</code> views).</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>schema list</code></td>
+<td>List the live <code>v_acm_*</code> views and their column counts.</td>
+</tr>
+<tr>
+<td><code>schema build</code></td>
+<td>Build the schema pack (introspection + doc enrichment) and write JSON.</td>
+</tr>
+<tr>
+<td><code>schema show</code></td>
+<td>Show a view's family/preference/FKs and columns from the schema pack.</td>
+</tr>
+<tr>
+<td><code>schema summary</code></td>
+<td>Summarize the schema pack (view/column/coverage/preference counts).</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>query</code></strong> — Validate or run a read-only <code>SELECT</code> over the <code>v_acm_*</code> views.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>query validate</code></td>
+<td>Dry-run the guardrail pipeline on a SQL string (no execution).</td>
+</tr>
+<tr>
+<td><code>query run</code></td>
+<td>Validate and execute a read-only <code>SELECT</code>; prints results.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>audit</code></strong> — Inspect the query audit log.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>audit tail</code></td>
+<td>Show the most recent audit records.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>env</code></strong> — List the configured ActOne environments (DB profiles).</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>env list</code></td>
+<td>List configured environments (metadata only; never passwords).</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>docs</code></strong> — Parse the <code>v_acm_*</code> doc pages (descriptions + FK graph).</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docs enrich</code></td>
+<td>Parse the <code>v_acm_*</code> doc pages and resolve the FK graph.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-options">Key options<a class="headerlink" href="#key-options" title="Permanent link">&para;</a></h3>
+<p><strong><code>query run</code></strong> — <a href="../full-reference/#actone-data-query-run"><code>actone-data query run</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--profile</code>, <code>-p</code></td>
+<td>Named profile (default: built-in local).</td>
+</tr>
+<tr>
+<td><code>--dsn</code></td>
+<td>Full libpq DSN (wins over profile/env).</td>
+</tr>
+<tr>
+<td><code>--max-rows</code></td>
+<td>Max rows to return (cap 1000, default 100).</td>
+</tr>
+<tr>
+<td><code>--question</code>, <code>-q</code></td>
+<td>The user question, recorded for audit.</td>
+</tr>
+<tr>
+<td><code>--format</code>, <code>-f</code></td>
+<td>Output format: <code>table</code> | <code>json</code> | <code>csv</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>query validate</code></strong> — <a href="../full-reference/#actone-data-query-validate"><code>actone-data query validate</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--profile</code>, <code>-p</code></td>
+<td>Profile used to fetch the live allowlist.</td>
+</tr>
+<tr>
+<td><code>--dsn</code></td>
+<td>Full libpq DSN (wins over profile/env).</td>
+</tr>
+<tr>
+<td><code>--max-rows</code></td>
+<td>Row limit to inject/clamp to (cap 1000, default 100).</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>schema build</code></strong> — <a href="../full-reference/#actone-data-schema-build"><code>actone-data schema build</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--profile</code>, <code>-p</code></td>
+<td>Named profile (default: built-in local).</td>
+</tr>
+<tr>
+<td><code>--bundle</code></td>
+<td>Doc bundle dir (default: ActOne 10.2 Implementer Guide).</td>
+</tr>
+<tr>
+<td><code>--doc-version</code></td>
+<td>Override the doc/pack version when the DB carries no stamp.</td>
+</tr>
+<tr>
+<td><code>--out</code></td>
+<td>Output path (default: bundled <code>data/schema-pack-actone-&lt;ver&gt;.json</code>).</td>
 </tr>
 </tbody>
 </table>

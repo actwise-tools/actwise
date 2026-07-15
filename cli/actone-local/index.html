@@ -1107,6 +1107,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2227,6 +2244,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Command reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2364,6 +2398,90 @@ Start with a preflight:</p>
 <tr>
 <td><code>up</code></td>
 <td>Orchestrate all phases end-to-end (each idempotent).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>For every argument and option of every sub-command, see the <a href="../full-reference/#actone-local">full CLI reference</a>.</p>
+</blockquote>
+<p>Every command accepts <code>--config</code>, <code>-c</code> (path to <code>actone-local.yaml</code>, else defaults). The commands with extra flags are:</p>
+<h3 id="key-options">Key options<a class="headerlink" href="#key-options" title="Permanent link">&para;</a></h3>
+<p><strong><code>up</code></strong> — <a href="../full-reference/#actone-local-up"><code>actone-local up</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--force</code></td>
+<td>Override the build disk guard.</td>
+</tr>
+<tr>
+<td><code>--skip-build</code></td>
+<td>Stop before build/run (safe phases only).</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>verify</code></strong> — <a href="../full-reference/#actone-local-verify"><code>actone-local verify</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--timeout</code></td>
+<td>Seconds to wait for RCM to serve (default 180).</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>down</code></strong> — <a href="../full-reference/#actone-local-down"><code>actone-local down</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--purge</code></td>
+<td>Also delete the Postgres data volume.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>config</code></strong> — <a href="../full-reference/#actone-local-config"><code>actone-local config</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--init</code></td>
+<td>Write a default <code>actone-local.yaml</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>build</code></strong> — <a href="../full-reference/#actone-local-build"><code>actone-local build</code></a></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--force</code></td>
+<td>Build even if disk is below the safety line.</td>
 </tr>
 </tbody>
 </table>
