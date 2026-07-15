@@ -1,0 +1,48 @@
+# ActWise Ops — ActOne instance (environment) catalog.
+#
+# Copy to `actone-ops.yaml` (gitignored) and edit. Each profile under `profiles:`
+# is an "environment" the ops CLI (`actone ops --env <name>`) and the ops MCP
+# server (`env` tool argument, surfaced by `list_environments`) can target.
+#
+# Do NOT put passwords here. Supply them per-environment via
+# `actone-ops.secrets.yaml` (see actone-ops.secrets.example.yaml) or the env var
+# `ACTONE_PASSWORD__<ENV>` (e.g. ACTONE_PASSWORD__POPULAR_QAS_DEV). Name environments
+# `<client>-<envId>` (e.g. popular-qas-dev).
+#
+# The built-in `default` environment always exists and reads url/user/password
+# from `<workdir>/.env` (ACTONE_URL/ACTONE_USER/ACTONE_PASSWORD/ACTONE_CONTEXT_ROOT)
+# — the original single-env behavior — so you only add profiles for *extra*
+# instances here.
+#
+# `url` is the ActOne base (scheme://host:port). If the app is served under a
+# context path (e.g. /RCM), set `context_root` separately — it is applied to the
+# login/diagnostics calls (spec operation paths carry their own prefix).
+#
+# WRITE GATE (default-deny, per-environment). Live writes (POST/PUT/DELETE/PATCH
+# and SOAP create/remove) are refused unless the target environment opts in with
+# `allow_writes: true` below. Omit it (or set false) to keep an environment
+# strictly read-only — the safe default. Keep this OFF for shared/prod-like
+# instances. The global `ACTONE_ALLOW_WRITES` env var governs only the built-in
+# `default` environment, and doubles as an emergency force-all-off kill switch.
+
+profiles:
+  popular-qas-dev:                     # <client>-<envId>
+    url: http://10.233.194.40:8080     # AWS-internal ActOne instance
+    context_root: RCM
+    user: admin
+    requires_vpn: true                 # reachable only when the host is on the corporate VPN
+    allow_writes: false                # keep shared/QAS instances read-only
+    notes: "Popular QAS Dev (AWS). VPN required; not reachable through the Cloudflare tunnel while VPN is up."
+
+  # vinay-local-dev:                   # local, disposable dev instance (safe to write)
+  #   url: http://localhost:8082
+  #   context_root: RCM
+  #   user: admin
+  #   allow_writes: true               # local dev may create/seed BUs & work items
+
+  # prod:                              # exercise caution exposing prod to a chat agent
+  #   url: https://actone-prod.internal.example.com
+  #   context_root: RCM
+  #   user: svc_actone_ro
+  #   requires_vpn: true
+  #   allow_writes: false

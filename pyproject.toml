@@ -1,0 +1,107 @@
+# PUBLIC overlay pyproject for the open-source ActWise distribution.
+# Generated snapshot target: github.com/actwise-tools/actwise
+#
+# Differences from the private master pyproject.toml:
+#   * public project URLs (actwise-tools org)
+#   * explicit Apache-2.0 license + classifiers
+#   * NO [tool.setuptools.package-data] -> the public build ships NO bundled NICE
+#     catalogs / schema packs / API specs; every catalog-dependent command fetches
+#     its data on first run using the user's own authenticated session.
+# The [tool.setuptools.package-dir] map is preserved because the exporter copies the
+# `components/` tree verbatim.
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "actwise"
+version = "0.2.3"
+description = "ActWise - an unofficial NICE Actimize engineering toolkit: docs, ops, data, utilities, downloads, installer - CLIs, MCP servers, and agent skills."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+keywords = ["actimize", "nice", "actone", "documentation", "cli", "mcp"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "typer>=0.12",
+    "rich>=13.0",
+    "requests>=2.31",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+    "playwright>=1.40",
+    "beautifulsoup4>=4.12",
+    "html2text>=2024.2",
+    "msal>=1.26",
+    "mcp>=1.0",
+    "truststore>=0.9",
+    "psycopg[binary]>=3.1",
+    "sqlglot>=25.0",
+    "uvicorn>=0.27",
+    "starlette>=0.37",
+    "fastapi>=0.110",
+]
+
+[project.optional-dependencies]
+dev = ["ruff", "pytest"]
+docs = ["mkdocs-material>=9.5"]
+
+[project.urls]
+Homepage = "https://github.com/actwise-tools/actwise"
+Repository = "https://github.com/actwise-tools/actwise"
+Issues = "https://github.com/actwise-tools/actwise/issues"
+
+[project.scripts]
+docenter = "docenter:app"
+docenter-mcp = "docenter_mcp.server:main"
+actimize-docs-mcp = "mcp_server.server:main"
+actone = "actone:app"
+actone-mcp = "actone_mcp.server:main"
+actone-utils = "actone_utils:app"
+actone-utils-mcp = "actone_utils.server:main"
+actone-data = "actone_data:app"
+actone-data-mcp = "actone_data_mcp.server:main"
+ndc = "nicedl:app"
+actimize-installer = "actinstaller:app"
+actone-local = "actone_local:app"
+
+[tool.setuptools]
+packages = [
+    "actwise",
+    "docenter", "docenter_mcp", "extractor", "mcp_server", "copilot_proxy",
+    "actone", "actone_mcp",
+    "actone_data", "actone_data_mcp",
+    "actone_utils", "nicedl", "actinstaller", "actone_local",
+]
+
+[tool.setuptools.package-dir]
+actwise         = "components/core/actwise"
+docenter        = "components/docenter/docenter"
+docenter_mcp    = "components/docenter/docenter_mcp"
+extractor       = "components/docenter/extractor"
+mcp_server      = "components/docenter/mcp_server"
+copilot_proxy   = "components/docenter/copilot_proxy"
+actone          = "components/ops/actone"
+actone_mcp      = "components/ops/actone_mcp"
+actone_data     = "components/data/actone_data"
+actone_data_mcp = "components/data/actone_data_mcp"
+actone_utils    = "components/utils/actone_utils"
+nicedl          = "components/nicedl/nicedl"
+actinstaller    = "components/installer/actinstaller"
+actone_local    = "components/installer/actone_local"
+
+# NOTE: the public package intentionally ships NO [tool.setuptools.package-data].
+# Bundled NICE catalogs, schema packs, and API specs are excluded by the exporter;
+# the CLIs fetch what they need on first run using the user's own credentials.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "network: requires live portal / instance auth (deselected by default)",
+]
