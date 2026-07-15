@@ -1,0 +1,342 @@
+/* ======================================================================
+   NiCE Design System — Colors & Typography
+   Source: NiCE Brand Guidelines 2025 v2 (Our NiCE Brand)
+   ====================================================================== */
+
+/* --- 1. Brand typeface: Be Vietnam Pro — self-hosted from /fonts -----
+   Weights in use: 300 Light, 400 Regular, 500 Medium, 600 Semibold
+   Fallback/system: Arial (only when absolutely necessary per guidelines) */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-Light.ttf') format('truetype');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-LightItalic.ttf') format('truetype');
+  font-weight: 300; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-Regular.ttf') format('truetype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-Italic.ttf') format('truetype');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-Medium.ttf') format('truetype');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-MediumItalic.ttf') format('truetype');
+  font-weight: 500; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-SemiBold.ttf') format('truetype');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-Bold.ttf') format('truetype');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  src: url('fonts/BeVietnamPro-BoldItalic.ttf') format('truetype');
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
+:root {
+  /* ================================================================
+     COLOR — Primary palette (used for logos, backgrounds, text)
+     ---------------------------------------------------------------- */
+  --nice-blue:           #3694fc;    /* R54 G148 B252  — the dominant color */
+  --nice-charcoal:       #21212b;    /* R33 G33 B43 — "NiCE black" */
+  --nice-white:          #ffffff;
+  --nice-warm-white:     #f2f0eb;    /* R242 G240 B235 — panels/squircles/bubbles only, never bg */
+
+  /* ================================================================
+     COLOR — Secondary palette (used for gradients, icons, accents)
+     Always uses tonally-adjacent columns when combined
+     ---------------------------------------------------------------- */
+  --electric-blue:       #025afb;    /* R2 G90 B251 */
+  --electric-blue-tint:  #90b6fd;
+  --nice-blue-tint:      #a7d0fe;
+
+  --electric-indigo:     #6100ff;    /* R97 G0 B255 */
+  --electric-indigo-tint:#b98fff;
+
+  --teal:                #36ead0;    /* R54 G234 B208 */
+  --teal-tint:           #acf7f3;
+
+  --emerald:             #00e2a0;    /* R0 G226 B160 */
+  --emerald-tint:        #9ceed2;
+
+  --coral:               #ff5b8a;    /* R255 G91 B138 */
+  --coral-tint:          #f3b1c4;
+
+  /* ================================================================
+     COLOR — Semantic foreground / background
+     ---------------------------------------------------------------- */
+  --fg-default:          var(--nice-charcoal);
+  --fg-muted:            #5c5c6a;               /* derived — 60% charcoal on white */
+  --fg-subtle:           #8a8a95;               /* derived — 45% charcoal */
+  --fg-invert:           var(--nice-white);
+  --fg-accent:           var(--nice-blue);
+
+  --bg-default:          var(--nice-white);
+  --bg-surface:          var(--nice-warm-white);
+  --bg-inverse:          var(--nice-charcoal);
+  --bg-accent:           var(--nice-blue);
+
+  --border-subtle:       rgba(33, 33, 43, 0.08);
+  --border-default:      rgba(33, 33, 43, 0.14);
+  --border-strong:       rgba(33, 33, 43, 0.24);
+  --border-inverse:      rgba(255, 255, 255, 0.16);
+
+  /* Signal colors — derived for UI use, anchored on secondary palette */
+  --success:             #00b583;      /* emerald, darkened for AA on white */
+  --warning:             #f59a2e;      /* warm amber (not in brand palette — derived) */
+  --danger:              #e33c65;      /* darker coral for AA on white */
+  --info:                var(--nice-blue);
+
+  /* ================================================================
+     GRADIENTS — the on-brand 3D "color wave" look.
+     Gradients must have ≥50% blue. Use linear 30–60° where possible.
+     For production use the generator tool; these are CSS stand-ins.
+     ---------------------------------------------------------------- */
+  --gradient-signature:    linear-gradient(125deg, var(--electric-indigo) 0%, var(--electric-blue) 45%, var(--nice-blue) 80%, var(--teal) 100%);
+  --gradient-blue-emerald: linear-gradient(130deg, var(--electric-blue) 0%, var(--nice-blue) 50%, var(--emerald) 100%);
+  --gradient-blue-teal:    linear-gradient(135deg, var(--electric-blue) 0%, var(--nice-blue) 55%, var(--teal) 100%);
+  --gradient-indigo-blue:  linear-gradient(135deg, var(--electric-indigo) 0%, var(--electric-blue) 60%, var(--nice-blue) 100%);
+  --gradient-coral-indigo: linear-gradient(135deg, var(--coral) 0%, var(--electric-indigo-tint) 50%, var(--electric-indigo) 100%);
+  --gradient-lavender:     linear-gradient(135deg, var(--electric-indigo-tint) 0%, var(--electric-blue-tint) 60%, var(--nice-blue) 100%);
+
+  /* ================================================================
+     SPACING — 4px base grid
+     ---------------------------------------------------------------- */
+  --space-0:  0; /* @kind spacing */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ================================================================
+     RADIUS — mirrors brand guidance (16–48 digital, 6–17mm print).
+     The brand has 3 shape primitives: squircle, chat bubble, rounded panel.
+     ---------------------------------------------------------------- */
+  --radius-xs: 4px;    /* small chips */
+  --radius-sm: 8px;    /* inputs, small buttons */
+  --radius-md: 12px;   /* buttons */
+  --radius-lg: 16px;   /* small panels */
+  --radius-xl: 24px;   /* mid panels */
+  --radius-2xl: 32px;  /* large image containers */
+  --radius-3xl: 40px;  /* large image containers */
+  --radius-4xl: 48px;  /* hero containers */
+  --radius-pill: 9999px;    /* chat bubble (single line), pills, CTA */
+  --radius-squircle: 28% / 32%; /* @kind radius */ /* NiCE squircle — CSS elliptical radius approx */
+
+  /* ================================================================
+     SHADOW & ELEVATION — brand leans on flat + gradient + shape;
+     shadows are restrained. These are UI-tier only.
+     ---------------------------------------------------------------- */
+  --shadow-xs: 0 1px 2px rgba(33, 33, 43, 0.04);
+  --shadow-sm: 0 2px 6px rgba(33, 33, 43, 0.06), 0 1px 2px rgba(33, 33, 43, 0.04);
+  --shadow-md: 0 8px 20px rgba(33, 33, 43, 0.08), 0 2px 6px rgba(33, 33, 43, 0.05);
+  --shadow-lg: 0 20px 48px rgba(33, 33, 43, 0.14), 0 6px 12px rgba(33, 33, 43, 0.06);
+  --shadow-focus: 0 0 0 3px rgba(54, 148, 252, 0.32);
+
+  /* ================================================================
+     MOTION — flowing, effortless. Natural easing, never bouncy.
+     ---------------------------------------------------------------- */
+  --ease-flow:     cubic-bezier(0.22, 0.61, 0.36, 1); /* @kind other */ /* default, friction-free */
+  --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1); /* @kind other */
+  --ease-emphasized: cubic-bezier(0.2, 0.0, 0, 1); /* @kind other */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-base: 200ms; /* @kind other */
+  --dur-slow: 360ms; /* @kind other */
+
+  /* ================================================================
+     TYPOGRAPHY — Be Vietnam Pro. Tracking: optical -20 up to 60pt, -30 above.
+     Leading: Headline 100–110%, Subheads/Body 120–130%, Feature 110–120%.
+     Sentence case, NEVER title case or all caps (except the literal word "AI").
+     ---------------------------------------------------------------- */
+  --font-brand: 'Be Vietnam Pro', Arial, system-ui, -apple-system, Segoe UI, Helvetica, sans-serif;
+  --font-system: Arial, system-ui, -apple-system, Segoe UI, Helvetica, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* weight tokens */
+  --fw-light:    300; /* @kind font */
+  --fw-regular:  400; /* @kind font */
+  --fw-medium:   500; /* @kind font */
+  --fw-semibold: 600; /* @kind font */
+
+  /* web type scale — derived from the guidelines (references Figma for truth) */
+  --text-xs:    12px;
+  --text-sm:    14px;
+  --text-base:  16px;
+  --text-md:    18px;
+  --text-lg:    20px;
+  --text-xl:    24px;
+  --text-2xl:   32px;
+  --text-3xl:   40px;
+  --text-4xl:   56px;
+  --text-5xl:   72px;
+  --text-6xl:   96px;
+
+  --leading-tight: 1.05; /* @kind font */ /* headlines */
+  --leading-snug:  1.15; /* @kind font */
+  --leading-normal: 1.25; /* @kind font */ /* subheads */
+  --leading-relaxed: 1.5; /* @kind font */ /* body */
+
+  --tracking-tight: -0.02em; /* @kind font */ /* optical -20 at display sizes */
+  --tracking-tighter: -0.028em; /* @kind font */ /* optical -30 above 60pt */
+  --tracking-normal: -0.01em; /* @kind font */
+}
+
+/* =========================================================================
+   Base element defaults
+   ========================================================================= */
+html, body {
+  font-family: var(--font-brand);
+  font-weight: var(--fw-regular);
+  color: var(--fg-default);
+  background: var(--bg-default);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* =========================================================================
+   Semantic typography classes — use these everywhere
+   ========================================================================= */
+
+/* Display / Headlines — Semibold, tight, display copy */
+.t-display-xl, h1.display {
+  font-family: var(--font-brand);
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-6xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tighter);
+}
+.t-display-lg {
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-5xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+.t-display-md {
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Headings */
+h1, .t-h1 {
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-3xl);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+}
+h2, .t-h2 {
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-2xl);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+}
+h3, .t-h3 {
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-xl);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-normal);
+}
+h4, .t-h4 {
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+}
+
+/* Feature copy — intro paragraphs, big callouts — Regular */
+.t-feature {
+  font-weight: var(--fw-regular);
+  font-size: var(--text-md);
+  line-height: 1.4;         /* 110–120% per brand */
+  letter-spacing: var(--tracking-normal);
+}
+.t-feature-lg {
+  font-weight: var(--fw-regular);
+  font-size: var(--text-xl);
+  line-height: 1.3;
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Body copy — Light — per brand guidance */
+p, .t-body {
+  font-weight: var(--fw-light);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+}
+.t-body-lg {
+  font-weight: var(--fw-light);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+}
+.t-body-sm {
+  font-weight: var(--fw-light);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+/* Subheadings — Semibold */
+.t-subhead {
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+}
+
+/* Labels & UI — Medium */
+.t-label, label {
+  font-family: var(--font-brand);
+  font-weight: var(--fw-medium);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+.t-label-sm {
+  font-weight: var(--fw-medium);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+}
+
+/* Code / mono — rare but needed */
+code, pre, .t-mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+/* Link */
+a {
+  color: var(--fg-accent);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: opacity var(--dur-fast) var(--ease-flow);
+}
+a:hover { opacity: 0.78; }

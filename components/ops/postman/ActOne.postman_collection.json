@@ -1,0 +1,156 @@
+{
+  "info": {
+    "name": "ActOne Extend REST APIs",
+    "description": "Hand-built collection for ActOne: Login (captures CSRF token + session cookie) followed by Save Step Changes. Base URL is configured via the {{rcm}} environment variable (e.g. http://10.233.194.40:8080/RCM).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Capture CSRF token from the response header and store it for later requests",
+              "var csrfToken = pm.response.headers.get(\"CSRFTOKEN\");",
+              "if (csrfToken) {",
+              "    pm.environment.set(\"CSRFTOKEN\", csrfToken);",
+              "}",
+              "console.log(\"CSRF Token:\", csrfToken);",
+              "",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"CSRF token exists\", function () {",
+              "    pm.expect(csrfToken).to.not.be.null;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{rcm}}/api/public/v1/auth/login",
+          "host": ["{{rcm}}"],
+          "path": ["api", "public", "v1", "auth", "login"]
+        },
+        "description": "POST /RCM/api/public/v1/auth/login\n\nLogs in with username/password. A successful login (200) returns a session cookie (stored automatically in Postman's cookie jar) and a CSRFTOKEN response header (captured into the {{CSRFTOKEN}} environment variable by the test script)."
+      }
+    },
+    {
+      "name": "Save Step Changes",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Tomcat rejects raw { } [ ] \" in the URL ('Invalid character in request target').",
+              "// Pre-encode the JSON-valued query params so the runtime sends valid percent-encoding.",
+              "var wid = pm.environment.get('work_item_id') || pm.variables.get('work_item_id');",
+              "var note = pm.environment.get('note') || pm.variables.get('note') || '';",
+              "pm.variables.set('wi_q', encodeURIComponent(JSON.stringify([wid])));",
+              "pm.variables.set('note_q', encodeURIComponent(JSON.stringify({ note: note })));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "CSRFTOKEN",
+            "value": "{{CSRFTOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "_",
+              "value": "",
+              "type": "text",
+              "description": "Placeholder so Postman sends a valid multipart/form-data body. Real file parts go here as 'files' when attaching attachments."
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{rcm}}/api/v1/work-items/workflow/save-step?workItemIdentifiers={{wi_q}}&statusIdentifier={{status_identifier}}&note={{note_q}}&forceStatus={{force_status}}",
+          "host": ["{{rcm}}"],
+          "path": ["api", "v1", "work-items", "workflow", "save-step"],
+          "query": [
+            {
+              "key": "workItemIdentifiers",
+              "value": "{{wi_q}}",
+              "description": "Required. Must be valid JSON: a JSON array of identifiers, e.g. [\"id1\",\"id2\"]. The pre-request script builds this percent-encoded into {{wi_q}} from work_item_id, because Tomcat rejects raw [ ] \" in the URL."
+            },
+            {
+              "key": "statusIdentifier",
+              "value": "{{status_identifier}}",
+              "description": "Target workflow status identifier (the step IDENTIFIER, e.g. Under_QA_Review_2 / QA_Completed_3 — case sensitive), not the display name. Must be an allowed next step from the item's current step. Omit to leave the status unchanged."
+            },
+            {
+              "key": "note",
+              "value": "{{note_q}}",
+              "description": "Must be a JSON object with ONLY the 'note' key: {\"note\":\"text\"}. The pre-request script builds this percent-encoded into {{note_q}} from the 'note' env var. Required for steps whose requiresNote=true (e.g. Under_QA_Review_2)."
+            },
+            {
+              "key": "forceStatus",
+              "value": "{{force_status}}",
+              "description": "Forces save step status update, ignoring normal workflow checks. Default false. Requires the 'Execute Web Service' permission."
+            },
+            {
+              "key": "reasons",
+              "value": "",
+              "description": "JSON array of reason objects, e.g. [{\"codeField\":\"...\",\"nameField\":\"...\"}].",
+              "disabled": true
+            },
+            {
+              "key": "confidential",
+              "value": "false",
+              "description": "Boolean flag ('true'/'false') marking the note as confidential. Defaults to false.",
+              "disabled": true
+            },
+            {
+              "key": "resetRecall",
+              "value": "false",
+              "description": "Boolean flag ('true'/'false') to reset the recall counter on the work item.",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "POST /RCM/api/v1/work-items/workflow/save-step\n\nAll inputs are QUERY parameters. Authentication relies on the session cookie set by Login (sent automatically) plus the CSRFTOKEN header.\n\nTwo gotchas verified against the live server:\n1. The endpoint ONLY accepts Content-Type 'multipart/form-data'. Sending none, application/json or application/x-www-form-urlencoded returns 'HTTP 415 Unsupported Media Type'. The body is therefore set to form-data mode (Postman adds the multipart boundary automatically — do NOT set Content-Type manually). The empty '_' field just guarantees a valid multipart body; add real 'files' parts here to attach files.\n2. workItemIdentifiers must be valid JSON — a JSON array like [\"id1\"] (hence value [\"{{work_item_id}}\"]). A bare id returns 400 'Bad JSON syntax'.\n\nSet work_item_id in the environment to a real work item id; an invalid id returns 404 'Could not find Work Item'."
+      }
+    }
+  ]
+}
