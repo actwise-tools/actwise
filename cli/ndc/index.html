@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2322,6 +2324,15 @@ Download Center (Flexera SubscribeNet).</p>
 <p>Find and fetch the right install media — installers, service packs, patches — for an
 Actimize product and version, with <strong>MD5-verified</strong> downloads. <code>ndc</code> is the
 packages counterpart to <a href="../docenter/"><code>docenter</code></a> (documentation).</p>
+<pre class="mermaid"><code>flowchart LR
+    C[("NICE Download Center&lt;br/&gt;&lt;small&gt;Flexera SubscribeNet&lt;/small&gt;")]
+    A["ndc auth&lt;br/&gt;&lt;small&gt;portal login&lt;/small&gt;"]
+    S["search · find&lt;br/&gt;&lt;small&gt;curated product keys&lt;/small&gt;"]
+    F["list-files&lt;br/&gt;&lt;small&gt;filename · size · MD5&lt;/small&gt;"]
+    D["download&lt;br/&gt;&lt;small&gt;MD5-verified&lt;/small&gt;"]
+    P[("packages/&lt;br/&gt;&lt;small&gt;feeds installer&lt;/small&gt;")]
+    A --&gt; S --&gt; F --&gt; D --&gt; P
+    S -.-&gt;|query catalog| C</code></pre>
 <h2 id="how-it-fits">How it fits<a class="headerlink" href="#how-it-fits" title="Permanent link">&para;</a></h2>
 <p><code>ndc</code> is the CLI core of the <a href="../../buckets/nicedl/">nicedl bucket</a> and is driven by
 the <a href="../../skills/actimize-nicedl/">actimize-nicedl</a> skill. It sits upstream of the

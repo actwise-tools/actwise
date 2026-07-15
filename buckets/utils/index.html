@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2250,6 +2252,22 @@ parameters are verified against the shipped <code>&lt;tool&gt;_readme.txt</code>
 <strong>dry-run by default</strong>; state-changing runs are gated. An execution-backend
 abstraction runs the same utility on <code>local</code>, <code>ssh</code>, <code>winrm</code>, or a <code>container</code>
 host.</p>
+<pre class="mermaid"><code>flowchart TD
+    U["Utility invocation&lt;br/&gt;&lt;small&gt;list → describe → run&lt;/small&gt;"]
+    D{"Dry-run by default"}
+    P["Print assembled command"]
+    G{"--yes · ACTONE_UTILS_ALLOW_RUN"}
+    subgraph back["Execution backends"]
+        direction LR
+        L["local"]
+        S["ssh"]
+        W["winrm"]
+        C["container"]
+    end
+    U --&gt; D
+    D --&gt;|preview| P
+    D --&gt;|state-changing| G
+    G --&gt;|confirmed| L &amp; S &amp; W &amp; C</code></pre>
 <h2 id="packages">Packages<a class="headerlink" href="#packages" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

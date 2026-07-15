@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/extra.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2137,6 +2139,25 @@ two topologies:</p>
   all three MCP servers attached directly, doing the domain routing itself in its own
   instructions.</li>
 </ul>
+<pre class="mermaid"><code>flowchart TB
+    subgraph orch["Orchestrator — Actwise-Main-Dev"]
+        direction TB
+        O["Router agent"]
+        OD["Docs child"]
+        OA["Data child"]
+        OP["Ops child"]
+        O --&gt;|delegates| OD &amp; OA &amp; OP
+    end
+    subgraph single["Single agent — ActWise-Main1-Dev"]
+        direction TB
+        S["One agent&lt;br/&gt;&lt;small&gt;self-routing&lt;/small&gt;"]
+        M1["docenter MCP"]
+        M2["actone-data MCP"]
+        M3["actone MCP"]
+        S --&gt; M1 &amp; M2 &amp; M3
+    end</code></pre>
+<p><em>A/B tested: the single-agent variant scored </em><em>92%</em><em> in </em><em>14:02</em><em>, beating the
+orchestrator (</em><em>83%</em><em>, </em><em>17:57</em><em>) on both quality and latency — see below.</em></p>
 <p><strong>A/B result (2026-07-14, same 12-case workflow test set, General-quality grading):</strong>
 the clean single-agent variant (<code>ActWise-Main1-Dev</code>, web search OFF, Maker auth)
 scored <strong>92%</strong> in <strong>14:02</strong>, beating the orchestrator (<code>Actwise-Main-Dev</code>) at <strong>83%</strong>

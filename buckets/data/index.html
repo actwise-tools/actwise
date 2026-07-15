@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2247,8 +2249,21 @@ holds <strong>no LLM key</strong> and has <strong>no write path</strong>: a bund
 model on exact view/column names, a <code>sqlglot</code> guardrail proves a candidate query
 is a single read-only <code>SELECT</code> over <code>v_acm_*</code> views, and execution runs in a
 <code>READ ONLY</code> transaction with a statement timeout and row cap. Every attempt is
-appended to a JSONL audit log. It prefers permission-aware <code>v_acm_item*</code> views
-over legacy <code>v_acm_alert*</code>.</p>
+appended to a JSONL audit log with the originating question. It prefers permission-aware
+<code>v_acm_item*</code> views over legacy <code>v_acm_alert*</code>.</p>
+<pre class="mermaid"><code>flowchart TD
+    Q["Natural-language question"]
+    G["Schema pack&lt;br/&gt;&lt;small&gt;grounds exact v_acm_* names&lt;/small&gt;"]
+    SQL["Generated SELECT&lt;br/&gt;&lt;small&gt;host LLM writes the SQL&lt;/small&gt;"]
+    V{"sqlglot guardrail&lt;br/&gt;&lt;small&gt;single read-only SELECT · LIMIT clamp&lt;/small&gt;"}
+    X["Rejected"]
+    R["Read-only execution&lt;br/&gt;&lt;small&gt;READ ONLY txn · timeout · row cap&lt;/small&gt;"]
+    A[("JSONL audit log")]
+    Res["Results&lt;br/&gt;&lt;small&gt;real rows + numbers&lt;/small&gt;"]
+    Q --&gt; G --&gt; SQL --&gt; V
+    V --&gt;|fail| X
+    V --&gt;|pass| R --&gt; Res
+    V &amp; R --&gt; A</code></pre>
 <h2 id="packages">Packages<a class="headerlink" href="#packages" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

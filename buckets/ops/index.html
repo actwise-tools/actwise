@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2248,6 +2250,20 @@ contract tests, config-review reports) and <strong>run-time</strong> (<code>acto
 <code>search → describe → call</code> discovery loop over the live API, read-only in P1).
 <code>actone_mcp</code> exposes the runtime loop to agents; <code>postman/</code> holds the JS contract
 tooling and the hard-won ActOne quirks catalog.</p>
+<pre class="mermaid"><code>flowchart TD
+    S[("OpenAPI spec&lt;br/&gt;&lt;small&gt;Extend REST API&lt;/small&gt;")]
+    O["actone ops&lt;br/&gt;&lt;small&gt;search → describe → call&lt;/small&gt;"]
+    D{"Operation type"}
+    R["Read · GET&lt;br/&gt;&lt;small&gt;runs directly&lt;/small&gt;"]
+    G{"allow_writes ·&lt;br/&gt;ACTONE_ALLOW_WRITES"}
+    W["Write · POST/PUT/DELETE"]
+    X["Refused&lt;br/&gt;&lt;small&gt;default-deny&lt;/small&gt;"]
+    A["Live ActOne instance"]
+    S --&gt; O --&gt; D
+    D --&gt;|read| R --&gt; A
+    D --&gt;|write| G
+    G --&gt;|opted in| W --&gt; A
+    G --&gt;|off| X</code></pre>
 <h2 id="packages">Packages<a class="headerlink" href="#packages" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

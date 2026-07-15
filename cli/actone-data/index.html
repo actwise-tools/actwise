@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2323,6 +2325,19 @@ over the ActOne <code>v_acm_*</code> PostgreSQL reporting views.</p>
 work items, alerts, cases, blotters, queues, users, item types, policies) by turning a
 natural-language question into <strong>one safe <code>SELECT</code></strong>, validating it, and running it on
 a read-only, row-capped, audited session.</p>
+<pre class="mermaid"><code>flowchart TD
+    Q["Natural-language question"]
+    G["Schema pack&lt;br/&gt;&lt;small&gt;grounds exact v_acm_* names&lt;/small&gt;"]
+    SQL["Generated SELECT&lt;br/&gt;&lt;small&gt;host LLM writes the SQL&lt;/small&gt;"]
+    V{"Guardrail pipeline&lt;br/&gt;&lt;small&gt;single read-only SELECT · LIMIT clamp&lt;/small&gt;"}
+    X["Rejected"]
+    R["Read-only execution&lt;br/&gt;&lt;small&gt;READ ONLY txn · timeout · row cap&lt;/small&gt;"]
+    A[("JSONL audit log")]
+    Res["Rows&lt;br/&gt;&lt;small&gt;table · json · csv&lt;/small&gt;"]
+    Q --&gt; G --&gt; SQL --&gt; V
+    V --&gt;|fail| X
+    V --&gt;|pass| R --&gt; Res
+    V &amp; R --&gt; A</code></pre>
 <h2 id="how-it-fits">How it fits<a class="headerlink" href="#how-it-fits" title="Permanent link">&para;</a></h2>
 <p><code>actone-data</code> is the CLI core of the <a href="../../buckets/data/">data bucket</a>. The same engine
 is exposed as the <a href="../../mcp/actone-data-mcp/"><code>actone-data-mcp</code></a> MCP server and driven

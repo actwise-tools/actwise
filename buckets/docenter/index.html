@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2246,6 +2248,13 @@ bundles; the <code>extractor</code> converts portal <code>topic_html</code> into
 <code>raw_docs/</code>; a local BM25 index and a live-portal MCP server both make that
 knowledge queryable by agents; and a Copilot proxy grounds a Copilot Studio agent
 on the portal without ingesting the corpus.</p>
+<pre class="mermaid"><code>flowchart LR
+    P[("Zoomin portal API&lt;br/&gt;&lt;small&gt;docs.niceactimize.com&lt;/small&gt;")]
+    E["extractor&lt;br/&gt;&lt;small&gt;topic_html → Markdown + YAML front matter&lt;/small&gt;"]
+    D[("raw_docs/&lt;br/&gt;&lt;small&gt;version · guide_type · source_url&lt;/small&gt;")]
+    B["BM25 search · MCP&lt;br/&gt;&lt;small&gt;actimize-docs-mcp&lt;/small&gt;"]
+    C["Answer with citations&lt;br/&gt;&lt;small&gt;source_url&lt;/small&gt;"]
+    P --&gt;|session cookie| E --&gt; D --&gt; B --&gt; C</code></pre>
 <h2 id="packages">Packages<a class="headerlink" href="#packages" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

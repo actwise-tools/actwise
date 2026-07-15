@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2323,6 +2325,13 @@ command line.</p>
 <strong>scriptable</strong>: find the right page fast, pull whole bundles to Markdown or PDF for
 offline/grounding use, and keep a local corpus in sync — all with <strong>your own</strong> portal
 session and <strong>citations</strong> back to the source.</p>
+<pre class="mermaid"><code>flowchart LR
+    P[("Zoomin portal API&lt;br/&gt;&lt;small&gt;docs.niceactimize.com&lt;/small&gt;")]
+    E["download · extractor&lt;br/&gt;&lt;small&gt;topic_html → Markdown + YAML front matter&lt;/small&gt;"]
+    D[("raw_docs/&lt;br/&gt;&lt;small&gt;version · guide_type · source_url&lt;/small&gt;")]
+    B["search --local · MCP&lt;br/&gt;&lt;small&gt;BM25 corpus&lt;/small&gt;"]
+    C["Answer with citations&lt;br/&gt;&lt;small&gt;source_url&lt;/small&gt;"]
+    P --&gt;|auth login cookie| E --&gt; D --&gt; B --&gt; C</code></pre>
 <h2 id="how-it-fits">How it fits<a class="headerlink" href="#how-it-fits" title="Permanent link">&para;</a></h2>
 <p><code>docenter</code> is the CLI core of the <a href="../../buckets/docenter/">docenter bucket</a>. The same
 logic is exposed as two MCP servers — <a href="../../mcp/docenter-mcp/"><code>docenter-mcp</code></a> (HTTP)

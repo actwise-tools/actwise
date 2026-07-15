@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2322,6 +2324,14 @@ execution behind a gate.</p>
 <p>Drive the Actimize product installer safely: inspect a downloaded package to detect
 its installer flavor, run the installer's own read-only <code>show</code>, and build the install
 command as a <strong>dry-run</strong> — only executing behind an explicit gate.</p>
+<pre class="mermaid"><code>flowchart TD
+    K[("Downloaded package&lt;br/&gt;&lt;small&gt;from ndc&lt;/small&gt;")]
+    D["detect&lt;br/&gt;&lt;small&gt;installer flavor · bin · CONF&lt;/small&gt;"]
+    S["show&lt;br/&gt;&lt;small&gt;read-only inspection&lt;/small&gt;"]
+    R["run&lt;br/&gt;&lt;small&gt;dry-run · builds exact command&lt;/small&gt;"]
+    G{"--execute + gate&lt;br/&gt;&lt;small&gt;--allow-prod if prod CONF&lt;/small&gt;"}
+    X["Install runs&lt;br/&gt;&lt;small&gt;logs → installer-runs/&lt;/small&gt;"]
+    K --&gt; D --&gt; S --&gt; R --&gt; G --&gt;|confirmed| X</code></pre>
 <h2 id="how-it-fits">How it fits<a class="headerlink" href="#how-it-fits" title="Permanent link">&para;</a></h2>
 <p><code>actimize-installer</code> is one of the two CLIs in the <a href="../../buckets/installer/">installer bucket</a>
 and is driven by the <a href="../../skills/actimize-installer/">actimize-installer</a> skill. It

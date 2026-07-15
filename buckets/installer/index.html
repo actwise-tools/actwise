@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2249,6 +2251,17 @@ a downloaded package carries (<code>rcm-installer</code>, <code>Actimize-install
 gate</strong> with captured logs — dry-run by default. <code>actone-local</code> automates an
 idempotent, disk-aware ActOne 10.2 local Docker install: build the image and
 stand up a lightweight Postgres in laptop-friendly phases.</p>
+<pre class="mermaid"><code>flowchart TD
+    N[("Package&lt;br/&gt;&lt;small&gt;from nicedl&lt;/small&gt;")]
+    subgraph inst["installer bucket"]
+        direction TB
+        AI["actimize-installer&lt;br/&gt;&lt;small&gt;detect → dry-run → gated run&lt;/small&gt;"]
+        AL["actone-local&lt;br/&gt;&lt;small&gt;Docker + Postgres lifecycle&lt;/small&gt;"]
+    end
+    P["Installed Actimize product"]
+    L["Local ActOne on Docker"]
+    N --&gt; AI --&gt; P
+    N --&gt; AL --&gt; L</code></pre>
 <h2 id="packages">Packages<a class="headerlink" href="#packages" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

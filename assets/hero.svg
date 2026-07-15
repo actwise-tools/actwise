@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" role="img"
+     aria-labelledby="title desc" font-family="'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif">
+  <title id="title">ActWise — build once, surface everywhere</title>
+  <desc id="desc">Three surfaces (terminal, Copilot Studio, Claude Code / GitHub Copilot) share one
+    fabric of MCP servers, CLIs and a shared Python package, which reaches the NICE Actimize docs
+    portal, a live ActOne REST instance, and the ActOne database.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12151d"/>
+      <stop offset="1" stop-color="#0a0c11"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5b6cf0"/>
+      <stop offset="1" stop-color="#7c8cff"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#3a4358"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="400" rx="16" fill="url(#bg)"/>
+  <rect x="0.5" y="0.5" width="1199" height="399" rx="16" fill="none" stroke="#232a39"/>
+
+  <!-- Left: identity -->
+  <text x="60" y="92" fill="#8792a6" font-size="15" letter-spacing="3" font-weight="600">
+    UNOFFICIAL · NICE ACTIMIZE ACTONE TOOLKIT</text>
+  <g transform="translate(60,120)">
+    <path d="M0 22 L14 34 L0 46 Z" fill="#7c8cff"/>
+    <text x="24" y="52" fill="#f2f4fb" font-size="66" font-weight="800"
+          letter-spacing="-1">ActWise</text>
+  </g>
+  <text x="60" y="230" fill="#c7cede" font-size="26" font-weight="600">Build once.
+    <tspan fill="#7c8cff">Surface everywhere.</tspan></text>
+  <text x="60" y="272" fill="#8792a6" font-size="17">7 CLIs · 5 MCP servers · 9 skills · Copilot Studio agents</text>
+  <g font-size="14" fill="#7f8aa0" font-family="'Cascadia Code','SFMono-Regular',Consolas,monospace">
+    <rect x="60" y="312" width="360" height="34" rx="8" fill="#0e1117" stroke="#232a39"/>
+    <text x="76" y="334"><tspan fill="#3fb950">$</tspan> uv tool install actwise</text>
+  </g>
+
+  <!-- Right: fabric diagram -->
+  <g font-size="15" fill="#c7cede" text-anchor="middle">
+
+    <!-- surfaces row -->
+    <g>
+      <rect x="620" y="60" width="160" height="46" rx="10" fill="#161b26" stroke="#2b3345"/>
+      <text x="700" y="88">Terminal</text>
+      <rect x="800" y="60" width="160" height="46" rx="10" fill="#161b26" stroke="#2b3345"/>
+      <text x="880" y="88">Copilot Studio</text>
+      <rect x="980" y="60" width="160" height="46" rx="10" fill="#161b26" stroke="#2b3345"/>
+      <text x="1060" y="82" font-size="14">Claude Code /</text>
+      <text x="1060" y="98" font-size="14">GitHub Copilot</text>
+    </g>
+
+    <!-- core fabric -->
+    <rect x="620" y="177" width="520" height="46" rx="12" fill="url(#core)"/>
+    <text x="880" y="205" fill="#0b0d12" font-weight="700" font-size="16">MCP servers · CLIs · shared Python package</text>
+
+    <!-- targets row -->
+    <g>
+      <rect x="620" y="300" width="160" height="46" rx="10" fill="#101722" stroke="#274012"/>
+      <text x="700" y="328" fill="#9fd88a">Docs portal</text>
+      <rect x="800" y="300" width="160" height="46" rx="10" fill="#101722" stroke="#274012"/>
+      <text x="880" y="328" fill="#9fd88a">ActOne REST</text>
+      <rect x="980" y="300" width="160" height="46" rx="10" fill="#101722" stroke="#274012"/>
+      <text x="1060" y="328" fill="#9fd88a">ActOne DB</text>
+    </g>
+  </g>
+
+  <!-- connectors: surfaces -> core -->
+  <g stroke="#3a4358" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
+    <path d="M700 106 L700 175"/>
+    <path d="M880 106 L880 175"/>
+    <path d="M1060 106 L1060 175"/>
+    <!-- core -> targets -->
+    <path d="M700 223 L700 298"/>
+    <path d="M880 223 L880 298"/>
+    <path d="M1060 223 L1060 298"/>
+  </g>
+</svg>

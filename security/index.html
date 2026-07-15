@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/extra.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2216,6 +2218,16 @@
 <h1 id="security-secrets">Security &amp; secrets<a class="headerlink" href="#security-secrets" title="Permanent link">&para;</a></h1>
 <p>ActWise is designed so that <strong>no secret and no NICE Actimize content ever needs to
 be committed</strong>. It operates entirely with <strong>your own</strong> authenticated sessions.</p>
+<p>Config is resolved by precedence — the first location that supplies a file wins — while
+credentials live only in gitignored secrets files:</p>
+<pre class="mermaid"><code>flowchart LR
+    E["$ACTWISE_CONFIG_DIR"]
+    W["cwd"]
+    H["~/.actwise"]
+    R["dev repo root"]
+    S[("Secrets&lt;br/&gt;&lt;small&gt;.env · *.secrets.yaml — gitignored&lt;/small&gt;")]
+    E --&gt;|first match wins| W --&gt; H --&gt; R
+    H -.-&gt;|passwords| S</code></pre>
 <h2 id="what-actwise-never-stores-or-ships">What ActWise never stores or ships<a class="headerlink" href="#what-actwise-never-stores-or-ships" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>No bundled NICE content.</strong> Documentation and data are fetched on demand with

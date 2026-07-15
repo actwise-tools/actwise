@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/extra.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2201,6 +2203,18 @@ or supported by NICE Ltd. It ships no NICE Actimize content.</p>
 <p>Console scripts installed by the distribution: <code>docenter</code> <code>docenter-mcp</code>
 <code>actimize-docs-mcp</code> <code>actone</code> <code>actone-mcp</code> <code>actone-utils</code> <code>actone-utils-mcp</code>
 <code>actone-data</code> <code>actone-data-mcp</code> <code>ndc</code> <code>actimize-installer</code> <code>actone-local</code>.</p>
+<pre class="mermaid"><code>flowchart TB
+    core["core&lt;br/&gt;&lt;small&gt;actwise.paths — shared config&lt;/small&gt;"]
+    subgraph caps["Capability buckets"]
+        direction LR
+        docenter["docenter&lt;br/&gt;&lt;small&gt;docs portal&lt;/small&gt;"]
+        ops["ops&lt;br/&gt;&lt;small&gt;live ActOne REST&lt;/small&gt;"]
+        data["data&lt;br/&gt;&lt;small&gt;read-only SQL&lt;/small&gt;"]
+        utils["utils&lt;br/&gt;&lt;small&gt;Java utilities&lt;/small&gt;"]
+        nicedl["nicedl&lt;br/&gt;&lt;small&gt;download media&lt;/small&gt;"]
+        installer["installer&lt;br/&gt;&lt;small&gt;install + local ActOne&lt;/small&gt;"]
+    end
+    core -.-&gt;|config resolution| docenter &amp; ops &amp; data &amp; utils &amp; nicedl &amp; installer</code></pre>
 <h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">uv</span> <span class="n">tool</span> <span class="n">install</span> <span class="s2">&quot;git+ssh://git@github.com/vinayguda/actwise.git&quot;</span>
 </code></pre></div>

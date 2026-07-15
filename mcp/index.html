@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/extra.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2121,6 +2123,15 @@ distribution. Five of its capability <a href="../buckets/">buckets</a> ship an M
 server as a console script, so the same grounded, gated logic that powers the
 CLIs is also callable by agents (VS Code, Claude Code, the GitHub Copilot CLI)
 and by the Copilot Studio agents under <code>agents/</code>.</p>
+<pre class="mermaid"><code>flowchart LR
+    U["MCP-aware client&lt;br/&gt;&lt;small&gt;Copilot Studio · Claude Code · Copilot CLI&lt;/small&gt;"]
+    M["ActWise MCP server&lt;br/&gt;&lt;small&gt;console script&lt;/small&gt;"]
+    P["Shared Python package&lt;br/&gt;&lt;small&gt;same code path as the CLI&lt;/small&gt;"]
+    D[("Docs portal")]
+    A["Live ActOne REST"]
+    DB[("ActOne DB&lt;br/&gt;&lt;small&gt;v_acm_* views&lt;/small&gt;")]
+    U --&gt;|stdio · HTTP| M --&gt; P
+    P --&gt; D &amp; A &amp; DB</code></pre>
 <blockquote>
 <p><strong>Unofficial project.</strong> ActWise is an unofficial, experimental personal side
 project. It is <strong>not</strong> a NICE Actimize product and is not affiliated with,

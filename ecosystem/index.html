@@ -55,6 +55,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/extra.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -2272,6 +2274,22 @@ same underlying Python package:</p>
 CLI. An <strong>MCP server</strong> wraps the same logic as callable <em>tools</em>. The <strong>CLI</strong> is the
 executable core. This is why the <a href="../#project-map">project map</a> lists a CLI, an
 MCP, and a skill for most buckets.</p>
+<pre class="mermaid"><code>flowchart LR
+    C["Capability&lt;br/&gt;&lt;small&gt;e.g. docs search&lt;/small&gt;"]
+    subgraph forms["Three interchangeable forms"]
+        direction TB
+        CLI["CLI&lt;br/&gt;&lt;small&gt;console script&lt;/small&gt;"]
+        MCP["MCP server&lt;br/&gt;&lt;small&gt;callable tools&lt;/small&gt;"]
+        SK["Skill&lt;br/&gt;&lt;small&gt;agent instructions&lt;/small&gt;"]
+    end
+    T["Terminal / CI"]
+    S["Copilot Studio"]
+    AG["Claude Code · GitHub Copilot · Cursor"]
+
+    C --&gt; CLI &amp; MCP &amp; SK
+    CLI --&gt; T
+    MCP --&gt; S
+    SK --&gt; AG</code></pre>
 <h2 id="capability-buckets">Capability buckets<a class="headerlink" href="#capability-buckets" title="Permanent link">&para;</a></h2>
 <p>The toolkit is organized into capability <strong>buckets</strong> under <code>components/</code>. Each is a
 self-contained slice — its own packages, CLI, MCP server(s), and skill(s):</p>
@@ -2290,16 +2308,21 @@ self-contained slice — its own packages, CLI, MCP server(s), and skill(s):</p>
 <p>The three grounded ActWise Copilot Studio agents (<a href="../agents/docs/">Docs</a>,
 <a href="../agents/data/">Data</a>, <a href="../agents/ops/">Ops</a>) each talk to an <strong>MCP server</strong>, which
 in turn calls the same code the CLIs use:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>User (Copilot Studio / Copilot CLI / Claude Code)
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>        │  natural language
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        ▼
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Skill / Agent  ──selects a tool──►  MCP server  ──►  shared Python package
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>                                                        │
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>                                        ┌───────────────┼───────────────┐
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>                                        ▼               ▼               ▼
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                                 docs portal      live ActOne      ActOne DB
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>                                 (Zoomin API)     (Extend REST)    (v_acm_* views)
-</code></pre></div>
+<pre class="mermaid"><code>flowchart TD
+    U["User&lt;br/&gt;&lt;small&gt;Copilot Studio · Copilot CLI · Claude Code&lt;/small&gt;"]
+    S["Skill / Agent"]
+    M["MCP server"]
+    P["Shared Python package"]
+    D[("Docs portal&lt;br/&gt;&lt;small&gt;Zoomin API&lt;/small&gt;")]
+    A["Live ActOne&lt;br/&gt;&lt;small&gt;Extend REST&lt;/small&gt;"]
+    DB[("ActOne DB&lt;br/&gt;&lt;small&gt;v_acm_* views&lt;/small&gt;")]
+
+    U --&gt;|natural language| S
+    S --&gt;|selects a tool| M
+    M --&gt; P
+    P --&gt; D
+    P --&gt; A
+    P --&gt; DB</code></pre>
 <p>There are <strong>two front-door topologies</strong> for the Copilot Studio experience:</p>
 <ul>
 <li><strong><a href="../agents/main/">ActWise (Main)</a></strong> — an <em>orchestrator</em> that routes each request
