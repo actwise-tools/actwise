@@ -1,0 +1,7 @@
+# ActWise portal backend — runtime deps (also covered by the actwise distribution).
+fastapi>=0.110
+uvicorn>=0.27
+httpx>=0.27
+truststore>=0.9
+# Only needed when the Entra SSO gate is enabled (ENTRA_TENANT_ID + ENTRA_API_AUDIENCE):
+PyJWT[crypto]>=2.8

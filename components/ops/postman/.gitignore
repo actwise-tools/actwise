@@ -1,0 +1,13 @@
+# Generated / local-only artifacts (regenerable)
+generated/
+tmp/
+node_modules/
+newman/
+reports/
+# Instance-fetched + generated specs are regenerable; the bundled fallback now
+# ships with the package at actone/data/, so everything under specs/ is ignored.
+specs/*
+*.log
+
+# Secrets (also covered by root .gitignore, repeated here for safety)
+.env

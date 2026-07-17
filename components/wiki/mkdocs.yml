@@ -1,0 +1,128 @@
+site_name: ActWise Wiki
+site_description: >-
+  ActWise — an unofficial NICE Actimize engineering toolkit: CLIs, MCP servers,
+  Copilot skills, and Copilot Studio agents for ActOne.
+site_author: ActWise
+docs_dir: content
+site_dir: site
+
+repo_name: actwise-tools/actwise
+repo_url: https://github.com/actwise-tools/actwise
+site_url: https://actwise-tools.github.io/actwise/
+edit_uri: ""
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  features:
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji
+
+plugins:
+  - search
+
+extra_css:
+  - assets/extra.css
+
+nav:
+  - Home: index.md
+  - Ecosystem: ecosystem.md
+  - Portal: portal.md
+  - Getting started:
+      - Install & onboarding: install.md
+      - Configuration: config.md
+      - Security & secrets: security.md
+  - Buckets:
+      - Overview: buckets/index.md
+      - core: buckets/core.md
+      - docenter: buckets/docenter.md
+      - ops: buckets/ops.md
+      - data: buckets/data.md
+      - utils: buckets/utils.md
+      - nicedl: buckets/nicedl.md
+      - installer: buckets/installer.md
+  - CLIs:
+      - Overview: cli/index.md
+      - docenter: cli/docenter.md
+      - actone: cli/actone.md
+      - actone-data: cli/actone-data.md
+      - actone-utils: cli/actone-utils.md
+      - ndc: cli/ndc.md
+      - actimize-installer: cli/actimize-installer.md
+      - actone-local: cli/actone-local.md
+      - Full --help reference: cli/full-reference.md
+  - MCP servers:
+      - Overview: mcp/index.md
+      - docenter-mcp: mcp/docenter-mcp.md
+      - actimize-docs-mcp: mcp/actimize-docs-mcp.md
+      - actone-mcp: mcp/actone-mcp.md
+      - actone-data-mcp: mcp/actone-data-mcp.md
+      - actone-utils-mcp: mcp/actone-utils-mcp.md
+  - Skills:
+      - Overview: skills/index.md
+      - actimize-docenter: skills/actimize-docenter.md
+      - docenter-live: skills/docenter-live.md
+      - actimize-installer: skills/actimize-installer.md
+      - actimize-nicedl: skills/actimize-nicedl.md
+      - actone-api-suite: skills/actone-api-suite.md
+      - actone-data: skills/actone-data.md
+      - actone-local: skills/actone-local.md
+      - actone-ops: skills/actone-ops.md
+      - actone-utils: skills/actone-utils.md
+      - copilot-studio-browser-authoring: skills/copilot-studio-browser-authoring.md
+  - Copilot Studio agents:
+      - Overview: agents/index.md
+      - ActWise (Main): agents/main.md
+      - ActWise (Main1 variant): agents/main1.md
+      - ActWise Docs: agents/docs.md
+      - ActWise Ops: agents/ops.md
+      - ActWise Data: agents/data.md
+      - ActWise Utility: agents/utility.md
+  - Reference:
+      - Glossary: glossary.md
+      - FAQ: faq.md
+      - Legal & disclaimer: legal.md
