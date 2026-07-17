@@ -1,0 +1,33 @@
+# DOCenter login broker — self-hosted noVNC backend.
+#
+# Build context is the repo root (the image installs the whole actwise dist),
+# so run:  docker compose -f components/portal/broker/docker-compose.yml up --build
+#
+# The broker is exposed on :8099 (MCP → POST /links; user browser → /connect),
+# and the interactive Chromium is exposed via noVNC on :6080.
+services:
+  docenter-broker:
+    build:
+      context: ../../..
+      dockerfile: components/portal/broker/Dockerfile
+    image: actwise-docenter-broker
+    ports:
+      - "8099:8099"   # broker API + connect page
+      - "6080:6080"   # noVNC (the interactive login browser)
+    environment:
+      # R1′ MCP→broker shared secret — REQUIRED. Set in a .env next to this file
+      # (gitignored) or export it; never commit it.
+      DOCENTER_BROKER_SECRET: "${DOCENTER_BROKER_SECRET:?set DOCENTER_BROKER_SECRET}"
+      # Public base the user's browser reaches the broker at (for building login_url).
+      BROKER_PUBLIC_BASE: "${BROKER_PUBLIC_BASE:-http://localhost:8099}"
+      # noVNC URL the connect page links the user to.
+      BROKER_NOVNC_URL: "${BROKER_NOVNC_URL:-http://localhost:6080/vnc.html}"
+      BROKER_BACKEND: self-hosted
+      BROKER_HEADLESS: "false"
+      # Per-user cookie store — mount a volume so captured sessions persist.
+      DOCENTER_USER_STORE_DIR: /data/docenter-users
+    volumes:
+      - broker-users:/data/docenter-users
+
+volumes:
+  broker-users:
