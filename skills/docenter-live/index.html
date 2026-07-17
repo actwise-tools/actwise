@@ -12,13 +12,13 @@
         <meta name="author" content="ActWise">
       
       
-        <link rel="canonical" href="https://actwise-tools.github.io/actwise/skills/actimize-nicedl/">
+        <link rel="canonical" href="https://actwise-tools.github.io/actwise/skills/docenter-live/">
       
       
-        <link rel="prev" href="../actimize-installer/">
+        <link rel="prev" href="../actimize-docenter/">
       
       
-        <link rel="next" href="../actone-api-suite/">
+        <link rel="next" href="../actimize-installer/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>actimize-nicedl - ActWise Wiki</title>
+        <title>docenter-live - ActWise Wiki</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#actimize-nice-download-center" class="md-skip">
+        <a href="#docenter-live" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              actimize-nicedl
+              docenter-live
             
           </span>
         </div>
@@ -1432,62 +1432,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../docenter-live/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    docenter-live
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../actimize-installer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    actimize-installer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1507,7 +1451,7 @@
   <span class="md-ellipsis">
     
   
-    actimize-nicedl
+    docenter-live
   
 
     
@@ -1525,7 +1469,7 @@
   <span class="md-ellipsis">
     
   
-    actimize-nicedl
+    docenter-live
   
 
     
@@ -1642,6 +1586,62 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../actimize-installer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    actimize-installer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../actimize-nicedl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    actimize-nicedl
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2358,51 +2358,53 @@
 
 
 
-<h1 id="actimize-nice-download-center">Actimize NICE Download Center<a class="headerlink" href="#actimize-nice-download-center" title="Permanent link">&para;</a></h1>
+<h1 id="docenter-live">docenter-live<a class="headerlink" href="#docenter-live" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>Find and download official NICE Actimize installation packages, service packs, and patches via the <code>ndc</code> CLI over the NICE Download Center.</p>
+<p>Answer NICE Actimize product questions <strong>strictly from the live documentation portal</strong> by driving the <code>docenter-live</code> MCP server, always citing the source URL — never from general knowledge.</p>
 </blockquote>
 <h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
-<p>Before you can install or upgrade an Actimize product you need the right artifact — the installer, service pack, or patch for a specific product and version. This skill teaches an AI agent to locate those packages on the NICE Software Download Center (<code>nice.subscribenet.com</code>, a Flexera SubscribeNet portal), confirm the exact files, and download them with MD5 verification, so the correct package is ready to hand to the Actimize Installer.</p>
+<p>When someone asks a NICE Actimize product question — how to configure a feature, what changed in a release, how to install a module — the answer must come from the official portal (<code>docs.niceactimize.com</code>), not the model's memory. This skill teaches an AI agent to run a faceted, version-aware search over the <strong>live</strong> portal, pull full page text when snippets are thin, and ground every claim in a citation URL. It is the strict, MCP-driven counterpart to the CLI-driven <a href="../actimize-docenter/">actimize-docenter</a> skill.</p>
 <h2 id="how-it-fits">How it fits<a class="headerlink" href="#how-it-fits" title="Permanent link">&para;</a></h2>
-<p>This skill drives the <code>ndc</code> CLI in the <strong>nicedl</strong> bucket — the install-package pillar. It is the counterpart to <strong>actimize-docenter</strong> (documentation) and the upstream feeder for <strong>actimize-installer</strong> and <strong>actone-local</strong>, which consume the packages it downloads. Rule of thumb: "how do I install X?" → docenter; "get me the installer for X" → this skill.</p>
+<p>This skill drives the <a href="../../mcp/docenter-mcp/"><code>docenter-mcp</code></a> server (server name <code>actwise-docenter-live</code>) in the <strong>docenter</strong> bucket — the live documentation pillar of ActWise. The same six read-only tools power the <strong>ActWise Docs</strong> Copilot Studio agent (<a href="../../agents/docs/">agent page</a>); this skill carries that agent's system prompt so local IDE agents (Claude Code, the GitHub Copilot CLI, VS Code) behave identically.</p>
 <h2 id="when-to-use-it">When to use it<a class="headerlink" href="#when-to-use-it" title="Permanent link">&para;</a></h2>
-<p>Activate when the user wants to:
-- Find or download an <strong>installer, service pack, or patch</strong> for an Actimize product/version.
-- Know which package versions are available for a product (ActOne, AIS, SAM, CDD, IFM, WL-X, connectors, etc.).
-- Fetch the exact artifact to feed the Actimize Installer for an install/upgrade.
-- See recently posted releases or files on the download center.</p>
+<p>Activate when the user:
+- Asks about configuration, installation, or features of any Actimize product (ActOne, AML, SAM, IFM, CDD, RCM, CTR, etc.).
+- Asks about release notes, patches, service packs, or version differences.
+- Asks "does Actimize support X?" or "how do I configure Y in Z?".
+- Needs an answer grounded in — and cited from — the official documentation portal.</p>
 <h2 id="what-it-does">What it does<a class="headerlink" href="#what-it-does" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Checks the portal session (<code>ndc auth status</code>) and logs in with <code>NDC_EMAIL</code>/<code>NDC_PASSWORD</code> from <code>.env</code>.</li>
-<li>Locates packages the easy way with <code>ndc find &lt;product&gt; [version] [--variant Full|SP|Patch]</code> — answered from an offline catalog cache, printing the exact download command.</li>
-<li>Discovers via <code>ndc products</code>, <code>ndc product-lines</code>, <code>ndc search</code>, and <code>ndc recent</code>, using friendly product keys that resolve the portal's opaque <code>plne</code> ids.</li>
-<li>Inspects a release's files (<code>ndc list-files &lt;element&gt; --plne &lt;plne&gt;</code>) with name, size, and MD5.</li>
-<li>Downloads with <code>ndc download &lt;element&gt; --plne &lt;plne&gt; [--match SUBSTR] [--dry-run]</code> — files land in <code>packages/</code> (gitignored) and are MD5-verified.</li>
-<li>Maintains an offline catalog cache (<code>ndc catalog refresh|status</code>).</li>
+<li>Calls <code>search_docs</code> <strong>before every documentation answer</strong> and answers only from the returned results.</li>
+<li>Auto-scopes to the newest version by passing <code>product=&lt;slug&gt;</code>; never asks the user for a version.</li>
+<li>Escalates snippets to full pages: <code>search_docs → get_page</code> for procedural / "how do I…" questions.</li>
+<li>Discovers structure with <code>find_bundles</code>, <code>list_docs</code>, <code>get_toc</code>, and resolves slugs with <code>get_catalog</code>.</li>
+<li>Cites every factual claim as a clickable Markdown link, copying <code>portal_url</code> exactly (never invents or edits URLs).</li>
+<li>Handles empty results (retry once without filters), version transparency, corrected queries, and tool failures per fixed rules.</li>
 </ul>
 <h2 id="install-enable">Install / enable<a class="headerlink" href="#install-enable" title="Permanent link">&para;</a></h2>
 <p>Skills follow the open Agent Skills spec and install via the <code>skills</code> CLI:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">npx</span> <span class="n">skills</span> <span class="n">add</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">vinayguda</span><span class="p">/</span><span class="n">actwise</span><span class="p">.</span><span class="n">git</span> <span class="p">-</span><span class="n">-skill</span> <span class="n">actimize-nicedl</span> <span class="n">-a</span> <span class="n">claude-code</span> <span class="n">-g</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">npx</span> <span class="n">skills</span> <span class="n">add</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">vinayguda</span><span class="p">/</span><span class="n">actwise</span><span class="p">.</span><span class="n">git</span> <span class="p">-</span><span class="n">-skill</span> <span class="n">docenter-live</span> <span class="n">-a</span> <span class="n">claude-code</span> <span class="n">-g</span>
 </code></pre></div>
-Skills are instructions only — they drive the ActWise CLIs, so install the <code>actwise</code> distribution too. This skill requires the <strong><code>ndc</code></strong> console script, plus <code>NDC_EMAIL</code>/<code>NDC_PASSWORD</code> in <code>.env</code>.</p>
+Skills are instructions only — this one drives the <strong><code>docenter-mcp</code></strong> server, so install the <code>actwise</code> distribution and register the MCP endpoint (<code>docenter-mcp</code>, or <code>python -m uvicorn docenter_mcp.server:app --port 8765</code>). The tools are discovered by the agentic runtime as <code>docenter-live-*</code> (e.g. <code>docenter-live-search_docs</code>).</p>
 <h2 id="walkthrough">Walkthrough<a class="headerlink" href="#walkthrough" title="Permanent link">&para;</a></h2>
 <ul>
-<li><em>"I want the ActOne 10.2 full installer."</em> → <code>ndc find actone 10.2 --variant Full</code>, then the printed <code>ndc download …</code> command.</li>
-<li><em>"What SAM patches are available?"</em> → <code>ndc search --product sam --variant Patch</code>, listing each release's <code>element</code>/<code>plne</code>.</li>
-<li><em>"Download the Linux package for this release."</em> → <code>ndc download &lt;element&gt; --plne &lt;plne&gt; --match linux --dest packages</code> with MD5 verification.</li>
+<li><em>"What is Dynamic Workflow in ActOne?"</em> → <code>search_docs</code> (product=actone) → <code>get_page</code> on the Reference Guide → cited explanation with a version note.</li>
+<li><em>"What's the latest ActOne release?"</em> → <code>find_bundles</code>/<code>list_docs</code> → <code>get_toc</code> → <code>get_page</code> on the newest Release Notes page.</li>
+<li><em>"Reset my documentation password."</em> → routed as <strong>out of scope</strong>; no <code>search_docs</code> call.</li>
 </ul>
 <h2 id="limits-safety">Limits &amp; safety<a class="headerlink" href="#limits-safety" title="Permanent link">&para;</a></h2>
 <ul>
-<li>All discovery and downloads require a valid portal session; login uses credentials from <code>.env</code> (never hardcoded).</li>
-<li><code>--dry-run</code> previews without downloading; real downloads are MD5-verified against the portal signature.</li>
-<li>Corporate TLS interception is handled via the OS trust store (<code>truststore</code>). This skill only downloads — installation is handled by <strong>actimize-installer</strong>.</li>
+<li>Strictly <strong>read-only</strong> — the tools only search and fetch documentation; they never touch a live ActOne system.</li>
+<li>Answers are confined to portal content; the skill never answers from general knowledge and never fabricates URLs.</li>
+<li>Depends on the <code>docenter-mcp</code> server having a valid Zoomin session (<code>.env</code> credentials / cookie); tool failures surface as a friendly retry message, not raw errors.</li>
 </ul>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CLI: <a href="../../cli/ndc/">../cli/ndc.md</a></li>
-<li>Bucket: <a href="../../buckets/nicedl/">../buckets/nicedl.md</a></li>
-<li>Related skills: <a href="../actimize-installer/">actimize-installer</a>, <a href="../actone-local/">actone-local</a>, <a href="../actimize-docenter/">actimize-docenter</a></li>
+<li>MCP: <a href="../../mcp/docenter-mcp/">docenter-mcp</a></li>
+<li>CLI: <a href="../../cli/docenter/">docenter</a></li>
+<li>Bucket: <a href="../../buckets/docenter/">docenter</a></li>
+<li>Agent: <a href="../../agents/docs/">ActWise Docs</a></li>
+<li>Related skills: <a href="../actimize-docenter/">actimize-docenter</a></li>
 </ul>
 
 
