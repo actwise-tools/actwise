@@ -2726,7 +2726,17 @@ the portal — it answers from the committed product catalog.</p>
 <tr>
 <td><code>GET /bundle/{bundle}/page/{nav_path}</code></td>
 <td>Full page (<code>topic_html</code>)</td>
-<td><code>get_page</code></td>
+<td><code>get_page</code> (HTML)</td>
+</tr>
+<tr>
+<td><code>GET /bundle/{bundle}/resource/{file}</code></td>
+<td>Resource descriptor → <code>topic_url</code> (archived/PDF bundles)</td>
+<td><code>get_page</code> (PDF)</td>
+</tr>
+<tr>
+<td><code>GET /bundle/{bundle}/raw/resource/enus/{file}</code></td>
+<td>Raw PDF bytes (from <code>topic_url</code>) → pypdf text</td>
+<td><code>get_page</code> (PDF)</td>
 </tr>
 <tr>
 <td><code>GET /bundle/{bundle}/toc?language=enus</code></td>
@@ -2844,17 +2854,25 @@ catalog (shipped under <code>docenter/data</code>) and resolves names/aliases/ve
     B --&gt;|yes| R["_resolve_product → detail&lt;br/&gt;slug, aliases, category, versions"]
     B --&gt;|no| C["roster grouped by category"]</code></pre>
 <h3 id="get_page"><code>get_page</code><a class="headerlink" href="#get_page" title="Permanent link">&para;</a></h3>
-<p>Parses the citation URL into <code>bundle</code> + <code>nav_path</code>, fetches the page, and converts
-<code>topic_html</code> to Markdown.</p>
+<p>Parses the citation URL and reads the source in full. HTML topics
+(<code>/page/…</code>) are fetched and converted from <code>topic_html</code> to Markdown; resource
+PDFs (<code>/resource/….pdf</code>, common on older/archived bundles) are resolved to their
+raw download via the resource descriptor's <code>topic_url</code>, then text-extracted with
+pypdf (<code>format: "pdf"</code>). Shared logic lives in <code>extractor.fetch_pdf_text</code>.</p>
 <pre class="mermaid"><code>flowchart TD
-    A["get_page(url, max_chars)"] --&gt; P["_parse_portal_url&lt;br/&gt;regex /bundle/…/page/…"]
-    P --&gt; V{valid page URL?}
-    V --&gt;|no| E["error: bad_url"]
-    V --&gt;|yes| FE["fetch_page(session, bundle, nav_path)&lt;br/&gt;GET /bundle/BUNDLE/page/NAV_PATH"]
+    A["get_page(url, max_chars)"] --&gt; P{"HTML page or resource PDF?"}
+    P --&gt;|"/page/… (HTML)"| PP["_parse_portal_url&lt;br/&gt;regex /bundle/…/page/…"]
+    PP --&gt; FE["fetch_page(session, bundle, nav_path)&lt;br/&gt;GET /bundle/BUNDLE/page/NAV_PATH"]
     FE --&gt; H{topic_html empty?}
     H --&gt;|yes| NF["error: not_found"]
     H --&gt;|no| MD["html_to_markdown → truncate(max_chars)"]
-    MD --&gt; O["result: title, bundle, version, updated, url, markdown, truncated"]</code></pre>
+    P --&gt;|"/resource/….pdf"| PR["_parse_portal_pdf_url&lt;br/&gt;regex /bundle/…/resource/….pdf"]
+    PR --&gt; DESC["GET /bundle/BUNDLE/resource/FILE&lt;br/&gt;JSON descriptor → topic_url"]
+    DESC --&gt; RAW["GET topic_url (raw PDF bytes)&lt;br/&gt;/bundle/BUNDLE/raw/resource/enus/FILE"]
+    RAW --&gt; PDF["pypdf extract_text → truncate(max_chars)&lt;br/&gt;format: pdf"]
+    P --&gt;|neither| BAD["error: bad_url"]
+    MD --&gt; O["result: title, bundle, version, updated, url, markdown, truncated"]
+    PDF --&gt; O</code></pre>
 <h3 id="get_toc"><code>get_toc</code><a class="headerlink" href="#get_toc" title="Permanent link">&para;</a></h3>
 <p>Fetches the bundle's TOC tree, flattens it, and builds a page-title + <code>portal_url</code>
 list.</p>
