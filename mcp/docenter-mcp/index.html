@@ -1327,10 +1327,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#session-resolution-403-self-heal" class="md-nav__link">
+  <a href="#session-resolution-cold-start-bootstrap-403-self-heal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Session resolution &amp; 403 self-heal
+        Session resolution, cold-start bootstrap &amp; 403 self-heal
       
     </span>
   </a>
@@ -2483,10 +2483,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#session-resolution-403-self-heal" class="md-nav__link">
+  <a href="#session-resolution-cold-start-bootstrap-403-self-heal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Session resolution &amp; 403 self-heal
+        Session resolution, cold-start bootstrap &amp; 403 self-heal
       
     </span>
   </a>
@@ -2745,7 +2745,7 @@ the portal — it answers from the committed product catalog.</p>
 </tr>
 <tr>
 <td><code>GET /auth/login</code> → <code>POST /auth/page/localStorage/api/login</code></td>
-<td>Browser-free re-login (403 self-heal)</td>
+<td>Browser-free login (cold-start bootstrap + 403 self-heal)</td>
 <td><code>_run_portal</code></td>
 </tr>
 <tr>
@@ -2783,10 +2783,15 @@ the portal — it answers from the committed product catalog.</p>
     R--&gt;&gt;T: parsed result
     T--&gt;&gt;F: dict → JSON-encoded text content
     F--&gt;&gt;C: SSE event: message (JSON-RPC result)</code></pre>
-<h3 id="session-resolution-403-self-heal">Session resolution &amp; 403 self-heal<a class="headerlink" href="#session-resolution-403-self-heal" title="Permanent link">&para;</a></h3>
+<h3 id="session-resolution-cold-start-bootstrap-403-self-heal">Session resolution, cold-start bootstrap &amp; 403 self-heal<a class="headerlink" href="#session-resolution-cold-start-bootstrap-403-self-heal" title="Permanent link">&para;</a></h3>
 <p>Shared by every portal-backed tool (<code>_run_portal</code> in <code>server.py</code>). The per-user
 path never touches the shared cookie, and a shared 403 triggers at most one
 throttled re-login per cooldown window.</p>
+<p>On the shared path the cookie is also <strong>self-minting</strong>: if no cookie exists yet
+(cold start — nothing injected), the first portal call performs one browser-free
+HTTP login from <code>DOCENTER_EMAIL</code> / <code>DOCENTER_PASSWORD</code>, writes the cookie, and
+serves the request. So the account password is the single source of truth — you
+never have to seed or rotate a cookie by hand (SSO-only accounts still inject one).</p>
 <pre class="mermaid"><code>flowchart TD
     A["_run_portal(fn, …)"] --&gt; R["_resolve_session()"]
     R --&gt; M{DOCENTER_PER_USER?}
@@ -2939,8 +2944,9 @@ caller (the Copilot Studio path). With <code>DOCENTER_PER_USER</code> turned on 
 <h2 id="safety">Safety<a class="headerlink" href="#safety" title="Permanent link">&para;</a></h2>
 <p>Strictly <strong>read-only</strong> — the tools search and fetch documentation only; they
 never touch a live ActOne system, run queries, or perform operations. Portal
-session errors surface as tool errors (cookie missing/expired), and the server
-self-heals a 403 by re-logging in with <code>.env</code> credentials.</p>
+session errors surface as tool errors, and on the shared path the server both
+<strong>cold-start bootstraps</strong> a missing cookie and <strong>self-heals a 403</strong> by logging in
+with the configured credentials.</p>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <a href="../../cli/docenter/"><code>docenter</code></a></li>

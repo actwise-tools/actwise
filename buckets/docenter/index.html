@@ -2430,7 +2430,9 @@ on the portal without ingesting the corpus.</p>
   a product filter without a version can return zero upstream; <code>docenter-mcp</code>
   auto-defaults to the newest version and falls back/broadens as needed.</li>
 <li><strong>Auth.</strong> Portal access uses a Zoomin <code>_SESSION</code> cookie in
-  <code>browser-profile/session-cookies.json</code>, minted by <code>docenter auth login</code>.</li>
+  <code>browser-profile/session-cookies.json</code>, minted by <code>docenter auth login</code> — or,
+  when hosted, self-minted by the MCP on first use (cold-start bootstrap) from
+  the account email/password, so no cookie needs to be seeded by hand.</li>
 <li><strong>Shared vs per-user.</strong> The Copilot path uses one shared cookie for everyone.
   The <a href="../../portal/">ActWise portal</a> adds a <strong>per-user</strong> path (<code>DOCENTER_PER_USER</code>)
   where each end user is served from their own captured cookie — an additive,
