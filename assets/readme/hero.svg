@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="340" viewBox="0 0 1200 340"
+     role="img" aria-labelledby="title desc">
+  <title id="title">ActWise</title>
+  <desc id="desc">ActWise — an engineering toolkit for NICE Actimize ActOne: docs, live REST, read-only SQL, utilities, install media, and a local ActOne, installed as one tool. Shown with a terminal running example ActWise commands.</desc>
+
+  <defs>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#161b22"/>
+      <stop offset="1" stop-color="#0d1117"/>
+    </linearGradient>
+  </defs>
+
+  <!-- canvas -->
+  <rect x="1" y="1" width="1198" height="338" rx="26" fill="url(#edge)" stroke="#21262d" stroke-width="1.5"/>
+
+  <!-- title block -->
+  <g transform="translate(64 0)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="2" y="86" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+          font-size="14" letter-spacing="2.5" fill="#7d8590">ENGINEERING TOOLKIT &#183; NICE ACTIMIZE ACTONE</text>
+
+    <text x="0" y="156" font-size="76" font-weight="700" fill="#e6edf3">
+      <tspan fill="#7c8cff">&#8250;</tspan><tspan dx="6">ActWise</tspan>
+    </text>
+
+    <text x="2" y="200" font-size="18" fill="#adbac7">One install for an ActOne engineer's daily work &#8212;</text>
+    <text x="2" y="226" font-size="18" fill="#adbac7">docs &#183; live REST &#183; read-only SQL &#183; utilities</text>
+    <text x="2" y="252" font-size="18" fill="#adbac7">&#183; install media &#183; a local ActOne on Docker.</text>
+
+    <text x="2" y="298" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+          font-size="13.5" fill="#6e7681">Apache-2.0 &#160;&#183;&#160; Python &#8805; 3.10 &#160;&#183;&#160; 7 CLIs &#183; 5 MCP servers &#183; 9 skills</text>
+  </g>
+
+  <!-- terminal proof -->
+  <g transform="translate(716 58)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+    <rect x="0" y="0" width="424" height="226" rx="12" fill="#010409" stroke="#30363d" stroke-width="1.5"/>
+    <!-- title bar -->
+    <path d="M0 12 A12 12 0 0 1 12 0 H412 A12 12 0 0 1 424 12 V34 H0 Z" fill="#161b22"/>
+    <circle cx="20" cy="17" r="5" fill="#ff5f56"/>
+    <circle cx="38" cy="17" r="5" fill="#ffbd2e"/>
+    <circle cx="56" cy="17" r="5" fill="#27c93f"/>
+    <text x="212" y="21" text-anchor="middle" font-size="12.5" fill="#6e7681">actwise</text>
+
+    <!-- body -->
+    <g font-size="14.5">
+      <text x="18" y="74"><tspan fill="#3fb950">$</tspan><tspan fill="#e6edf3" dx="8">uv tool install actwise</tspan></text>
+      <text x="18" y="108"><tspan fill="#3fb950">$</tspan><tspan fill="#e6edf3" dx="8">docenter search "LexisNexis Bridger"</tspan></text>
+      <text x="18" y="142"><tspan fill="#3fb950">$</tspan><tspan fill="#e6edf3" dx="8">actone-data query "SELECT count(*) &#8230;"</tspan></text>
+      <text x="18" y="188" fill="#6e7681"># ships no NICE data &#8212; uses your own session</text>
+      <text x="18" y="206" fill="#7c8cff">&#9608;</text>
+    </g>
+  </g>
+</svg>

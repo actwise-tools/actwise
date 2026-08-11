@@ -1,0 +1,9 @@
+# ActWise Data MCP — read-only NL-to-SQL over ActOne v_acm_* views (Streamable HTTP).
+# The actone_data engine adds psycopg + sqlglot on top of the FastMCP + uvicorn
+# stack (mirrors actone_mcp / docenter_mcp for easy porting).
+mcp>=1.2
+uvicorn>=0.27
+starlette>=0.37
+psycopg[binary]>=3.1
+sqlglot>=25
+PyYAML>=6.0
