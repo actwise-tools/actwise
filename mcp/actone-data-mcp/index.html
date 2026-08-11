@@ -1377,10 +1377,115 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#request-flow-tool-call-to-the-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request flow — tool call to the engine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Request flow — tool call to the engine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shared-request-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared request lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_schema_summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_schema_summary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list_views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_views
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe_view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list_environments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_environments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate_sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate_sql
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#transport-run" class="md-nav__link">
     <span class="md-ellipsis">
       
         Transport &amp; run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#self-host-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Self-host setup
       
     </span>
   </a>
@@ -2322,10 +2427,115 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#request-flow-tool-call-to-the-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request flow — tool call to the engine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Request flow — tool call to the engine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shared-request-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared request lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_schema_summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_schema_summary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list_views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_views
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe_view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list_environments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_environments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate_sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate_sql
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#transport-run" class="md-nav__link">
     <span class="md-ellipsis">
       
         Transport &amp; run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#self-host-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Self-host setup
       
     </span>
   </a>
@@ -2431,6 +2641,119 @@ registrations (all read-only):</p>
 </tr>
 </tbody>
 </table>
+<h2 id="request-flow-tool-call-to-the-engine">Request flow — tool call to the engine<a class="headerlink" href="#request-flow-tool-call-to-the-engine" title="Permanent link">&para;</a></h2>
+<p>Every tool call travels the <strong>same lifecycle</strong>: an MCP client <code>POST</code>s JSON-RPC to
+<code>/mcp</code> (Copilot Studio) or attaches over stdio (local IDE agents), the <code>_AuthGate</code>
+ASGI middleware authenticates HTTP callers, FastMCP dispatches the <code>@mcp.tool</code>
+handler, and the handler runs against one of two backends. <strong>Grounding</strong>
+(<code>get_schema_summary</code> / <code>list_views</code> / <code>describe_view</code>) answers <strong>offline</strong> from
+the bundled schema pack (<code>_pack()</code>, cached) — no DB. <strong>Execution</strong>
+(<code>validate_sql</code> / <code>run_query</code>) resolves the target profile (<code>_cfg(env)</code>), reads
+the <strong>live</strong> <code>v_acm_*</code> allowlist from <code>information_schema</code>, proves the SQL through
+the shared <code>sqlglot</code> guardrail, and only then opens a <code>READ ONLY</code> connection.
+<code>list_environments</code> reads config profiles (metadata only, never passwords). Every
+execution attempt — accepted or rejected — is appended to the JSONL audit log.</p>
+<p>Code path: <code>actone_data_mcp/server.py</code> (tools + transport) →
+<code>actone_data.{schema_pack, guardrails, db, config, audit}</code> — the same engine the
+<a href="../../cli/actone-data/"><code>actone-data</code></a> CLI drives.</p>
+<h3 id="shared-request-lifecycle">Shared request lifecycle<a class="headerlink" href="#shared-request-lifecycle" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+    participant C as MCP client
+    participant G as _AuthGate (ASGI)
+    participant F as FastMCP
+    participant T as tool handler
+    participant P as schema pack
+    participant D as ActOne PostgreSQL
+    participant A as JSONL audit log
+    C-&gt;&gt;G: POST /mcp — JSON-RPC tools/call&lt;br/&gt;X-API-Key (HTTP)  ·  or stdio
+    Note over G: /healthz → 200 (no auth)&lt;br/&gt;verify X-API-Key (hmac) when set
+    G--&gt;&gt;C: 401 on missing/bad key
+    G-&gt;&gt;F: authorized → pass through
+    F-&gt;&gt;T: dispatch tool(args)
+    alt Grounding — offline
+        T-&gt;&gt;P: _pack() (cached schema pack)
+        P--&gt;&gt;T: views / columns / rules
+    else Execution — live DB
+        T-&gt;&gt;T: _cfg(env) resolve profile
+        T-&gt;&gt;D: read v_acm_* allowlist (information_schema)
+        T-&gt;&gt;T: sqlglot guardrail (7 steps)
+        alt guardrail passes &amp; run_query
+            T-&gt;&gt;D: READ ONLY execute (timeout · row cap)
+            D--&gt;&gt;T: rows
+        end
+        T-&gt;&gt;A: record attempt (accepted / rejected)
+    end
+    T--&gt;&gt;F: dict → JSON content
+    F--&gt;&gt;C: JSON-RPC result</code></pre>
+<h3 id="get_schema_summary"><code>get_schema_summary</code><a class="headerlink" href="#get_schema_summary" title="Permanent link">&para;</a></h3>
+<p>Offline overview of the query surface — call it <strong>once, first</strong>. Reads the cached
+schema pack and returns the DB version, schema, view counts by family, the
+item-preference rules, and the global query rules, so the model orients before
+naming any view.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["get_schema_summary()"] --&gt; P["_pack() — cached schema pack&lt;br/&gt;NO DB call"]
+    P --&gt; O["result: version, schema, dialect,&lt;br/&gt;view_count, family counts,&lt;br/&gt;preference_rules, rules"]</code></pre>
+<h3 id="list_views"><code>list_views</code><a class="headerlink" href="#list_views" title="Permanent link">&para;</a></h3>
+<p>Lists the <strong>queryable</strong> <code>v_acm_*</code> views (doc-only views hidden), optionally
+filtered by <code>topic</code>. Legacy <code>v_acm_alert*</code> views are returned but flagged
+<code>preferred: false</code> so the model steers to the item equivalents.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["list_views(topic?)"] --&gt; P["_pack() (offline)"]
+    P --&gt; Q["_allowlisted — drop provenance=doc_only"]
+    Q --&gt; F{topic filter?}
+    F --&gt;|yes| FT["match family / name"]
+    F --&gt;|no| ALL["all queryable views"]
+    FT --&gt; O
+    ALL --&gt; O["result: count, views&lt;br/&gt;name · family · preferred"]</code></pre>
+<h3 id="describe_view"><code>describe_view</code><a class="headerlink" href="#describe_view" title="Permanent link">&para;</a></h3>
+<p>Full detail for one view: columns (<code>name</code> / <code>type</code> / <code>description</code> / <code>fk</code>),
+<code>related_views</code>, <code>source_url</code>, and preference. An unknown name returns
+<code>difflib</code> close-match <code>suggestions</code> instead of an error — served entirely offline.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["describe_view(view)"] --&gt; P["_pack() (offline)"]
+    P --&gt; K{view in pack?}
+    K --&gt;|no| S["error: unknown_view&lt;br/&gt;+ difflib suggestions"]
+    K --&gt;|yes| O["result: columns(name·type·description·fk),&lt;br/&gt;family, preferred, queryable,&lt;br/&gt;related_views, source_url"]</code></pre>
+<h3 id="list_environments"><code>list_environments</code><a class="headerlink" href="#list_environments" title="Permanent link">&para;</a></h3>
+<p>Lists the <strong>database (DATA)</strong> connection profiles for read-only SQL — metadata
+only. Reads <code>actone-data.yaml</code> via <code>config.list_profiles()</code>; passwords are never
+returned.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["list_environments()"] --&gt; C["config.list_profiles()&lt;br/&gt;actone-data.yaml"]
+    C --&gt; O["result: default, environments&lt;br/&gt;host·port·database·user·schema·dsn&lt;br/&gt;password_configured (never password)"]</code></pre>
+<h3 id="validate_sql"><code>validate_sql</code><a class="headerlink" href="#validate_sql" title="Permanent link">&para;</a></h3>
+<p>Dry-runs the guardrail on a SQL string — <strong>no execution</strong>. Resolves the target
+profile, reads that environment's <strong>live</strong> <code>v_acm_*</code> allowlist, then runs the
+7-step <code>sqlglot</code> pipeline and returns the normalized SQL that <em>would</em> run. The
+attempt is audited.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["validate_sql(sql, env?)"] --&gt; CFG["_cfg(env) resolve profile"]
+    CFG --&gt; LIVE["read live allowlist&lt;br/&gt;db._live_view_names (information_schema)"]
+    LIVE --&gt; GR{"7-step sqlglot guardrail&lt;br/&gt;single read-only SELECT · v_acm_* ·&lt;br/&gt;LIMIT inject/clamp"}
+    GR --&gt;|fail| X["ok:false · errors[]"]
+    GR --&gt;|pass| OK["ok:true · sql_used ·&lt;br/&gt;views_used · limit_injected"]
+    X --&gt; AUD["audit.record"]
+    OK --&gt; AUD</code></pre>
+<h3 id="run_query"><code>run_query</code><a class="headerlink" href="#run_query" title="Permanent link">&para;</a></h3>
+<p>Validates <strong>and</strong> executes a read-only SELECT. The guardrail <strong>re-runs inside</strong>
+<code>db.run_query</code>, so skipping <code>validate_sql</code> cannot bypass it; execution runs in a
+<code>READ ONLY</code> transaction with a statement timeout and a row cap (fetches
+<code>max_rows + 1</code> to flag truncation). Every attempt is audited with the originating
+question.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["run_query(sql, max_rows, question?, env?)"] --&gt; CFG["_cfg(env) resolve profile"]
+    CFG --&gt; GR{"guardrail (re-run internally)&lt;br/&gt;v_acm_* allowlist · LIMIT clamp"}
+    GR --&gt;|fail| X["ok:false · errors[]"]
+    GR --&gt;|pass| EX["READ ONLY execute&lt;br/&gt;statement timeout · row cap +1"]
+    EX --&gt; R["ok:true · columns · rows · row_count ·&lt;br/&gt;truncated · sql_used · views_used · duration_ms"]
+    X --&gt; AUD["audit.record"]
+    R --&gt; AUD</code></pre>
+<blockquote>
+<p>Full parameter/return contracts for each tool live in the tool docstrings in
+<code>components/data/actone_data_mcp/server.py</code>; the safety model is summarized under
+<a href="#safety">Safety</a> below.</p>
+</blockquote>
 <h2 id="transport-run">Transport &amp; run<a class="headerlink" href="#transport-run" title="Permanent link">&para;</a></h2>
 <p>Runs as <strong>stdio or HTTP</strong>. Console script from <code>pyproject.toml</code>
 (<code>actone-data-mcp = "actone_data_mcp.server:main"</code>):</p>
@@ -2441,6 +2764,25 @@ registrations (all read-only):</p>
 <p>The HTTP transport is <strong>self-hosted</strong>; when <code>ACTONE_DATA_PROXY_API_KEY</code> is set it
 enforces an <code>X-API-Key</code> header (mandatory for any tunnelled deployment — how the
 ActWise Data agent reaches it).</p>
+<h2 id="self-host-setup">Self-host setup<a class="headerlink" href="#self-host-setup" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Configure a database profile.</strong> Copy
+   <code>components/data/actone-data.example.yaml</code> to <code>~/.actwise/actone-data.yaml</code>
+   (resolution order: <code>$ACTWISE_CONFIG_DIR</code> → cwd → <code>~/.actwise</code> → repo root) and
+   set each profile's <code>host</code>, <code>port</code>, <code>dbname</code>, <code>schema</code> (the client's <code>bppr_rcm</code>
+   / <code>acm</code> schema), and <code>user</code>. Profile YAML holds <strong>no passwords</strong>.</li>
+<li><strong>Provide the password</strong> out-of-band: <code>ACTONE_DB_PASSWORD__&lt;PROFILE&gt;</code> (profile
+   name upper-cased, non-alphanumerics → <code>_</code>) or an <code>actone-data.secrets.yaml</code>
+   beside the config.</li>
+<li><strong>Grant a read-only DB login.</strong> The engine only ever issues a single <code>READ ONLY</code>
+   <code>SELECT</code> over <code>v_acm_*</code> views; a login with <code>SELECT</code> on those views is enough
+   (and safest).</li>
+<li><strong>Point at the schema pack</strong> if your deployment differs — the bundled
+   <code>v_acm_*</code> metadata grounds query generation; no fetch step is required.</li>
+<li><strong>Shared HTTP deploy:</strong> set <code>ACTONE_DATA_PROXY_API_KEY</code> and require the
+   <code>X-API-Key</code> header on the tunnel. VPN-gated databases are only reachable when
+   the host is on the corporate VPN.</li>
+</ol>
 <h2 id="safety">Safety<a class="headerlink" href="#safety" title="Permanent link">&para;</a></h2>
 <p>Strictly <strong>read-only</strong>. The guardrail always re-runs inside <code>run_query</code>, so it
 cannot be bypassed by skipping <code>validate_sql</code>: only a single <code>SELECT</code>/<code>UNION</code>
