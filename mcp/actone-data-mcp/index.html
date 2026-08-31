@@ -1355,6 +1355,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#two-tool-surfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two tool surfaces
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-it-fits" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1467,6 +1478,28 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-solution-grounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-solution grounding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-diagnostics-surface-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance &amp; diagnostics (Surface B)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2405,6 +2438,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#two-tool-surfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two tool surfaces
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-it-fits" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2521,6 +2565,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#multi-solution-grounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-solution grounding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-diagnostics-surface-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance &amp; diagnostics (Surface B)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#transport-run" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2583,16 +2649,30 @@
 
 <h1 id="actone-data-mcp">actone-data-mcp<a class="headerlink" href="#actone-data-mcp" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>Read-only natural-language-to-SQL over the ActOne <code>v_acm_*</code> PostgreSQL
-reporting views — grounds, validates, and executes; never writes.</p>
+<p>Read-only natural-language-to-SQL over the ActOne platform <strong>and its installed
+solutions</strong> (SAM, CDD, STAR, QAS, …), plus a read-only <strong>performance-tuning</strong>
+diagnostics suite — grounds, validates, and executes; never writes.</p>
 </blockquote>
 <h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
 <p>Answer data questions about ActOne (alerts, work items, cases, blotters, queues,
-users, item types, policies) with real rows. The host LLM writes a single SQL
-<code>SELECT</code>; this engine grounds it on exact view/column names, proves it through a
-<code>sqlglot</code> guardrail (single read-only SELECT over <code>v_acm_*</code>, injected/clamped
-LIMIT), and executes it in a <code>READ ONLY</code>, row-capped, audited transaction. The
-engine holds <strong>no LLM key and no write path</strong>.</p>
+users, item types, policies) <strong>and the solutions layered on top of it</strong> with real
+rows. The host LLM writes a single SQL <code>SELECT</code>; this engine grounds it on exact
+view/column names from the relevant <strong>solution schema pack</strong>, applies that
+solution's <strong>rule pack</strong> (query conventions + PII masking), proves it through a
+<code>sqlglot</code> guardrail (single read-only SELECT, injected/clamped LIMIT), and
+executes it in a <code>READ ONLY</code>, row-capped, audited transaction. A second,
+parallel <strong>performance diagnostics</strong> surface (Surface B) runs fixed,
+server-authored catalog queries — the model <em>names a tool</em>, it never writes
+catalog SQL. The engine holds <strong>no LLM key and no write path</strong>.</p>
+<h2 id="two-tool-surfaces">Two tool surfaces<a class="headerlink" href="#two-tool-surfaces" title="Permanent link">&para;</a></h2>
+<p>The server exposes <strong>17 read-only tools</strong> across two surfaces:</p>
+<ol>
+<li><strong>Surface A — NL-to-SQL grounding + execution</strong> (solution-aware): discover a
+   solution's schema/rules, then validate and run a single guardrailed <code>SELECT</code>.</li>
+<li><strong>Surface B — performance diagnostics</strong>: fixed <code>pg_catalog</code> / <code>pg_stat_*</code> /
+   <code>pg_settings</code> checks the model <em>invokes by name</em>, rolled up into a scored,
+   doc-cited recommendation report.</li>
+</ol>
 <h2 id="how-it-fits">How it fits<a class="headerlink" href="#how-it-fits" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Bucket:</strong> <a href="../../buckets/data/">data</a>.</li>
@@ -2605,8 +2685,9 @@ engine holds <strong>no LLM key and no write path</strong>.</p>
   stdio.</li>
 </ul>
 <h2 id="tools-exposed">Tools exposed<a class="headerlink" href="#tools-exposed" title="Permanent link">&para;</a></h2>
-<p>Enumerated from <code>components/data/actone_data_mcp/server.py</code> — six <code>@mcp.tool</code>
-registrations (all read-only):</p>
+<p>Enumerated from <code>components/data/actone_data_mcp/server.py</code> — <strong>17 <code>@mcp.tool</code>
+registrations, all read-only</strong>, in three groups.</p>
+<p><strong>Grounding (offline — served from the bundled schema/rule packs, no DB):</strong></p>
 <table>
 <thead>
 <tr>
@@ -2617,30 +2698,101 @@ registrations (all read-only):</p>
 <tbody>
 <tr>
 <td><code>get_schema_summary</code></td>
-<td>Overview of the query surface — DB version, schema, view counts by family, preference + global rules. Call once, first.</td>
+<td>Overview of the query surface — DB version, schema, view/table counts by family, preference + global rules. Accepts <code>solution</code> to summarize a solution pack. Call once, first.</td>
+</tr>
+<tr>
+<td><code>get_rules</code></td>
+<td>The solution's <strong>rule pack</strong>: query conventions, preferred/deprecated views, masked (PII) columns, and any solution-specific constraints the model must honor.</td>
 </tr>
 <tr>
 <td><code>list_views</code></td>
-<td>List queryable <code>v_acm_*</code> views (doc-only hidden); legacy alert views marked <code>preferred: false</code>. Filter by <code>topic</code>.</td>
+<td>List queryable <code>v_acm_*</code> views (or a <code>solution</code> pack's tables); legacy alert views marked <code>preferred: false</code>. Filter by <code>topic</code>.</td>
 </tr>
 <tr>
 <td><code>describe_view</code></td>
-<td>One view's columns (<code>name</code>/<code>type</code>/<code>description</code>/<code>fk</code>), <code>related_views</code>, and preferred item equivalents.</td>
+<td>One view/table's columns (<code>name</code>/<code>type</code>/<code>description</code>/<code>fk</code>), <code>related_views</code>, <code>source_url</code>, and preferred item equivalents. Accepts <code>solution</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Execution (live DB — guardrailed, read-only):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>validate_sql</code></td>
+<td>Dry-run the guardrail on a SQL string (no execution): <code>{ok, errors, sql_used, views_used, limit_injected}</code>. Scoped by <code>env</code> + <code>solution</code>.</td>
+</tr>
+<tr>
+<td><code>run_query</code></td>
+<td>Validate <strong>and</strong> execute a read-only SELECT: columns, rows, row_count, truncated, sql_used, duration, and <code>masked_columns</code> (redacted PII). Scoped by <code>env</code> + <code>solution</code>.</td>
 </tr>
 <tr>
 <td><code>list_environments</code></td>
 <td>List the <strong>database (DATA)</strong> environment profiles for read-only SQL — metadata only, never passwords.</td>
 </tr>
+</tbody>
+</table>
+<p><strong>Performance &amp; diagnostics — Surface B (fixed server-authored catalog queries):</strong></p>
+<table>
+<thead>
 <tr>
-<td><code>validate_sql</code></td>
-<td>Dry-run the guardrail on a SQL string (no execution): <code>{ok, errors, sql_used, views_used, limit_injected}</code>.</td>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>perf_extensions</code></td>
+<td>Which perf extensions are installed (<code>pg_stat_statements</code>, <code>pgstattuple</code>, <code>hypopg</code>).</td>
 </tr>
 <tr>
-<td><code>run_query</code></td>
-<td>Validate <strong>and</strong> execute a read-only SELECT: columns, rows, row_count, truncated, sql_used, duration.</td>
+<td><code>perf_health_check</code></td>
+<td>Cache hit ratio, rollbacks/deadlocks, connection saturation, transaction-ID wraparound headroom.</td>
+</tr>
+<tr>
+<td><code>perf_top_queries</code></td>
+<td>Worst queries from <code>pg_stat_statements</code> (<code>sort</code>: total|mean|io|calls).</td>
+</tr>
+<tr>
+<td><code>perf_index_issues</code></td>
+<td>Unused and invalid indexes (drop / REINDEX candidates).</td>
+</tr>
+<tr>
+<td><code>perf_missing_indexes</code></td>
+<td>Tables with heavy sequential scans (indexing hotspots).</td>
+</tr>
+<tr>
+<td><code>perf_vacuum_health</code></td>
+<td>Dead-tuple accumulation + autovacuum recency/settings.</td>
+</tr>
+<tr>
+<td><code>perf_bloat_estimate</code></td>
+<td>Table bloat via <code>pgstattuple</code> (degrades gracefully if absent).</td>
+</tr>
+<tr>
+<td><code>perf_config_review</code></td>
+<td>Key planner / memory / autovacuum settings (advisory).</td>
+</tr>
+<tr>
+<td><code>perf_report</code></td>
+<td>Scored recommendation report rolling up all checks — each finding carries severity, evidence, fix, and a <code>source_url</code> doc citation. Accepts <code>solution</code> to scope table/index/vacuum checks to that solution's schema.</td>
+</tr>
+<tr>
+<td><code>explain_query</code></td>
+<td><code>EXPLAIN (FORMAT JSON)</code> a guardrail-validated SELECT, optionally <code>analyze</code> or with <strong>hypothetical</strong> HypoPG indexes. Scoped by <code>env</code> + <code>solution</code>.</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>Extension-backed perf checks <strong>degrade gracefully</strong> — they return
+<code>{"available": false, "note": …}</code> rather than erroring when the extension is
+absent, mirroring how version detection degrades on a stampless DB.</p>
+</blockquote>
 <h2 id="request-flow-tool-call-to-the-engine">Request flow — tool call to the engine<a class="headerlink" href="#request-flow-tool-call-to-the-engine" title="Permanent link">&para;</a></h2>
 <p>Every tool call travels the <strong>same lifecycle</strong>: an MCP client <code>POST</code>s JSON-RPC to
 <code>/mcp</code> (Copilot Studio) or attaches over stdio (local IDE agents), the <code>_AuthGate</code>
@@ -2754,6 +2906,110 @@ question.</p>
 <code>components/data/actone_data_mcp/server.py</code>; the safety model is summarized under
 <a href="#safety">Safety</a> below.</p>
 </blockquote>
+<h2 id="multi-solution-grounding">Multi-solution grounding<a class="headerlink" href="#multi-solution-grounding" title="Permanent link">&para;</a></h2>
+<p>ActOne is a <strong>stack</strong>, not a single product. The base platform ships the
+<code>v_acm_*</code> reporting views; each installed <strong>solution</strong> either <em>enhances</em> the base
+schema (e.g. <strong>QAS</strong> adds tables to the ActOne/RCM schema with no schema of its
+own) or <em>adds its own schema</em> alongside it (e.g. <strong>STAR</strong>, <strong>CDD Profiles</strong>,
+<strong>SAM</strong>). Live deployments prefix the logical schema with a customer/environment
+token (e.g. logical <code>cdd_prf</code> → deployed <code>bppr_cdd_prf</code>).</p>
+<p>The engine models each solution as a <strong>schema pack</strong> (tables + columns +
+descriptions + FK graph, package-DDL-derived and doc-enriched) paired with a
+<strong>rule pack</strong> (query conventions + PII masking). The grounding tools take a
+<code>solution</code> argument and serve that pack, so the model discovers a solution's
+surface before querying it. <code>run_query</code>/<code>validate_sql</code>/<code>explain_query</code> resolve
+the deployed schema name automatically via the environment's schema prefix.</p>
+<table>
+<thead>
+<tr>
+<th>Solution</th>
+<th>Own schema</th>
+<th>Grounding pack</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ActOne (base)</td>
+<td><code>actone</code> / <code>rcm</code> (<code>v_acm_*</code> views)</td>
+<td>✅</td>
+<td>Permission-aware item views.</td>
+</tr>
+<tr>
+<td>QAS</td>
+<td><em>none — enhances base</em></td>
+<td>✅</td>
+<td>Adds tables into the RCM schema.</td>
+</tr>
+<tr>
+<td>SAM</td>
+<td><code>sam_app</code></td>
+<td>✅</td>
+<td>Suspicious Activity Monitoring.</td>
+</tr>
+<tr>
+<td>CDD</td>
+<td><code>cdd_app</code></td>
+<td>✅</td>
+<td>Customer Due Diligence.</td>
+</tr>
+<tr>
+<td>CDD Profiles</td>
+<td><code>cdd_prf</code></td>
+<td>✅</td>
+<td>KYC profile store; direct-identifier columns masked.</td>
+</tr>
+<tr>
+<td>CDD DART</td>
+<td><code>cdd_drt</code></td>
+<td>✅</td>
+<td>Detection Analytics &amp; Reporting Tool.</td>
+</tr>
+<tr>
+<td>STAR</td>
+<td><code>star_app</code></td>
+<td>✅</td>
+<td>Suspicious Transaction Activity Reporting.</td>
+</tr>
+<tr>
+<td>WLF / IFM</td>
+<td><code>wlf_lm</code> / <code>ifm_app</code></td>
+<td>draft</td>
+<td>Package-DDL-derived; pending live validation.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>PII masking.</strong> A rule pack may declare <code>constraints.masked_columns</code>; matching
+output columns are redacted to <code>***REDACTED***</code> at result time (name-based,
+case-insensitive) and reported back in <code>run_query</code>'s <code>masked_columns</code> field. The
+CDD Profiles (KYC) pack masks direct-identifier columns (names, DOB,
+passport/ID numbers, address, phone, email) while leaving codes/flags/keys intact.</p>
+<pre class="mermaid"><code>flowchart TD
+    Q["question + solution"] --&gt; SUM["get_schema_summary(solution)&lt;br/&gt;+ get_rules(solution)"]
+    SUM --&gt; DESC["list_views / describe_view(solution)&lt;br/&gt;&lt;small&gt;exact table + column names&lt;/small&gt;"]
+    DESC --&gt; SQL["host LLM writes one SELECT"]
+    SQL --&gt; RES["solution_schema(env) →&lt;br/&gt;deployed schema (e.g. bppr_cdd_prf)"]
+    RES --&gt; GR{"guardrail + allowlist"}
+    GR --&gt;|pass| EX["READ ONLY execute"]
+    EX --&gt; MASK["mask PII columns&lt;br/&gt;&lt;small&gt;rule-pack masked_columns&lt;/small&gt;"]
+    MASK --&gt; OUT["rows + masked_columns[]"]
+    GR --&gt;|fail| X["ok:false · errors[]"]</code></pre>
+<h2 id="performance-diagnostics-surface-b">Performance &amp; diagnostics (Surface B)<a class="headerlink" href="#performance-diagnostics-surface-b" title="Permanent link">&para;</a></h2>
+<p>A second, parallel tool surface identifies performance issues <strong>without letting
+the model author catalog SQL</strong> — each <code>perf_*</code> tool runs a fixed, server-authored
+query over <code>pg_catalog</code> / <code>pg_stat_*</code> / <code>pg_settings</code> on the shared read-only
+session, so the read-only + audit guarantees hold. <code>perf_report</code> rolls the
+individual checks into a scored, graded recommendation report; every finding
+carries a severity, evidence, a concrete fix, and a <code>source_url</code> linking to the
+authoritative PostgreSQL documentation for that dimension.</p>
+<pre class="mermaid"><code>flowchart TD
+    R["perf_report(env, solution?)"] --&gt; EXT["perf_extensions&lt;br/&gt;&lt;small&gt;what's available&lt;/small&gt;"]
+    R --&gt; H["health · top-queries · indexes ·&lt;br/&gt;missing-indexes · vacuum · config"]
+    H --&gt; SC["score + grade each finding&lt;br/&gt;&lt;small&gt;severity · evidence · fix · source_url&lt;/small&gt;"]
+    EXT --&gt; SC
+    SC --&gt; OUT["recommendation report&lt;br/&gt;&lt;small&gt;JSON + Markdown, worst-first&lt;/small&gt;"]
+    R -.-&gt;|solution?| SCOPE["scope table/index/vacuum checks&lt;br/&gt;to the solution schema"]
+    SCOPE --&gt; H</code></pre>
 <h2 id="transport-run">Transport &amp; run<a class="headerlink" href="#transport-run" title="Permanent link">&para;</a></h2>
 <p>Runs as <strong>stdio or HTTP</strong>. Console script from <code>pyproject.toml</code>
 (<code>actone-data-mcp = "actone_data_mcp.server:main"</code>):</p>

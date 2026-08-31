@@ -2484,15 +2484,19 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 </tr>
 <tr>
 <td><code>schema</code></td>
-<td>Introspect the live ActOne schema (<code>v_acm_*</code> views).</td>
+<td>Introspect the live ActOne schema (<code>v_acm_*</code> views) or a solution's schema pack (<code>--solution</code>).</td>
 </tr>
 <tr>
 <td><code>query</code></td>
-<td>Validate or run a read-only <code>SELECT</code> over the <code>v_acm_*</code> views.</td>
+<td>Validate or run a read-only <code>SELECT</code> over the <code>v_acm_*</code> views (or a solution's tables).</td>
 </tr>
 <tr>
 <td><code>audit</code></td>
 <td>Inspect the query audit log.</td>
+</tr>
+<tr>
+<td><code>perf</code></td>
+<td>Read-only performance diagnostics — fixed server-authored catalog queries + a scored report.</td>
 </tr>
 <tr>
 <td><code>env</code></td>
@@ -2551,6 +2555,58 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 <tr>
 <td><code>query run</code></td>
 <td>Validate and execute a read-only <code>SELECT</code>; prints results.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>perf</code></strong> — Read-only performance diagnostics (fixed server-authored queries; the
+model/CLI <em>names a check</em>, it never writes catalog SQL).</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>perf extensions</code></td>
+<td>Which perf extensions are installed (<code>pg_stat_statements</code>, <code>pgstattuple</code>, <code>hypopg</code>).</td>
+</tr>
+<tr>
+<td><code>perf health</code></td>
+<td>Cache hit ratio, rollbacks/deadlocks, connections, wraparound headroom.</td>
+</tr>
+<tr>
+<td><code>perf top-queries</code></td>
+<td>Worst queries from <code>pg_stat_statements</code> (<code>sort</code>: total|mean|io|calls).</td>
+</tr>
+<tr>
+<td><code>perf indexes</code></td>
+<td>Unused and invalid indexes (drop / REINDEX candidates).</td>
+</tr>
+<tr>
+<td><code>perf missing-indexes</code></td>
+<td>Tables with heavy sequential scans (indexing hotspots).</td>
+</tr>
+<tr>
+<td><code>perf vacuum</code></td>
+<td>Dead-tuple accumulation + autovacuum recency/settings.</td>
+</tr>
+<tr>
+<td><code>perf bloat</code></td>
+<td>Table bloat via <code>pgstattuple</code> (notes if the extension is absent).</td>
+</tr>
+<tr>
+<td><code>perf config</code></td>
+<td>Key planner / memory / autovacuum settings (advisory).</td>
+</tr>
+<tr>
+<td><code>perf report</code></td>
+<td>Scored recommendation report rolling up all checks (findings carry a <code>source_url</code> doc citation).</td>
+</tr>
+<tr>
+<td><code>perf explain</code></td>
+<td><code>EXPLAIN (FORMAT JSON)</code> a guardrail-validated SELECT (optional HypoPG hypothetical indexes).</td>
 </tr>
 </tbody>
 </table>
@@ -2702,6 +2758,14 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
   session — no INSERT/UPDATE/DELETE/DDL.</li>
 <li><strong>Grounded on the reporting views.</strong> It prefers the permission-aware <code>v_acm_item*</code>
   views and uses the parsed <code>docs</code> (descriptions + FK graph) as schema context.</li>
+<li><strong>Multi-solution aware.</strong> <code>schema list/show</code> and <code>query</code> accept <code>--solution</code>
+  (<code>-s</code>) to ground on an installed solution's pack (SAM, CDD, CDD Profiles, CDD
+  DART, STAR, QAS, …); the deployed schema name (e.g. <code>bppr_cdd_prf</code>) is resolved
+  from the environment prefix, and rule packs add per-solution conventions + PII
+  masking.</li>
+<li><strong>Performance diagnostics.</strong> <code>perf</code> runs fixed, server-authored catalog checks
+  and a scored <code>perf report</code> (doc-cited findings) — a read-only tuning surface that
+  never executes model-authored SQL.</li>
 <li><strong><code>eval</code></strong> scores the NL→SQL pipeline against a bundled eval set for regression
   tracking.</li>
 </ul>

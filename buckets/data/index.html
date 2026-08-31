@@ -2398,11 +2398,13 @@ appended to a JSONL audit log with the originating question. It prefers permissi
 <h2 id="cli-mcp-skills-agent">CLI / MCP / Skills / Agent<a class="headerlink" href="#cli-mcp-skills-agent" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>CLI:</strong> <a href="../../cli/actone-data/"><code>actone-data</code></a> — <code>ping</code>, <code>version</code>, <code>schema</code>,
-  <code>query validate</code> / <code>query run</code>, <code>audit</code>, <code>env</code>, <code>docs</code>, <code>eval</code>.</li>
-<li><strong>MCP:</strong> <a href="../../mcp/actone-data-mcp/"><code>actone-data-mcp</code></a> — five read-only tools:
-  schema summary, list/describe views, validate SQL, run query.</li>
+  <code>query validate</code> / <code>query run</code>, <code>perf</code>, <code>audit</code>, <code>env</code>, <code>docs</code>, <code>eval</code>.</li>
+<li><strong>MCP:</strong> <a href="../../mcp/actone-data-mcp/"><code>actone-data-mcp</code></a> — <strong>17 read-only tools</strong>
+  across two surfaces: NL-to-SQL grounding + execution (schema summary, rules,
+  list/describe, validate, run — all solution-aware) and performance diagnostics
+  (health, indexes, vacuum, config, scored report, explain).</li>
 <li><strong>Skill:</strong> <a href="../../skills/actone-data/"><code>actone-data</code></a> — the behavior spec for the
-  <code>get_schema_summary → list/describe → validate → run</code> loop.</li>
+  <code>get_schema_summary → get_rules → list/describe → validate → run</code> loop.</li>
 <li><strong>Agent:</strong> <a href="../../agents/data/">ActWise Data</a> — grounded on
   <code>actone-data-mcp</code> via a self-hosted, API-key-gated MCP endpoint.</li>
 </ul>
@@ -2411,11 +2413,22 @@ appended to a JSONL audit log with the originating question. It prefers permissi
 <li><strong>Grounding, not guessing.</strong> A bundled schema pack provides exact view and
   column names; the model must call <code>get_schema_summary</code> / <code>describe_view</code> before
   naming a view, so it never invents identifiers.</li>
+<li><strong>Multi-solution stack.</strong> ActOne is a platform with <strong>solutions</strong> layered on
+  top — some enhance the base schema (QAS), others add their own (SAM, CDD, CDD
+  Profiles, STAR). Each is modeled as a <code>solution</code> schema pack + rule pack; the
+  deployed schema name (e.g. <code>bppr_cdd_prf</code>) is resolved from the environment
+  prefix.</li>
+<li><strong>Rule packs + PII masking.</strong> Per-solution rule packs carry query conventions
+  and a <code>masked_columns</code> list; direct-identifier (PII) columns are redacted to
+  <code>***REDACTED***</code> at result time and reported in <code>run_query</code>.</li>
 <li><strong>7-step guardrail.</strong> <code>sqlglot</code> enforces a single read-only <code>SELECT</code>/<code>UNION</code>
-  over the <code>v_acm_*</code> allowlist and injects/clamps a LIMIT; the guardrail always
+  over the allowlist and injects/clamps a LIMIT; the guardrail always
   re-runs inside <code>run_query</code>, so it can't be bypassed.</li>
 <li><strong>Read-only execution.</strong> Queries run in a <code>READ ONLY</code> transaction with a
   statement timeout and row cap — no DML/DDL, no multi-statement.</li>
+<li><strong>Performance diagnostics (Surface B).</strong> A parallel set of <code>perf_*</code> tools runs
+  fixed, server-authored <code>pg_catalog</code> / <code>pg_stat_*</code> checks and a scored,
+  doc-cited <code>perf_report</code> — issue detection with the same read-only guarantees.</li>
 <li><strong>Item views preferred.</strong> Legacy <code>v_acm_alert*</code> views are not permission-aware;
   the engine steers to the unified, permission-aware <code>v_acm_item*</code> equivalents.</li>
 <li><strong>Audited.</strong> Every attempt (accepted or rejected) is appended to a JSONL audit
