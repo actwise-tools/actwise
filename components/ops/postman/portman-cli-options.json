@@ -1,0 +1,10 @@
+{
+  "url": "specs/ActOne_Extend_Rest_APIs.portman.yaml",
+  "baseUrl": "{{rcm}}",
+  "output": "generated/ActOne.contract.postman_collection.json",
+  "portmanConfigFile": "portman-config.json",
+  "runNewman": false,
+  "syncPostman": false,
+  "includeTests": true,
+  "bundleContractTests": true
+}
