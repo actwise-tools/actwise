@@ -2491,6 +2491,10 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 <td>Validate or run a read-only <code>SELECT</code> over the <code>v_acm_*</code> views (or a solution's tables).</td>
 </tr>
 <tr>
+<td><code>rules</code></td>
+<td>Show a solution's rule pack — advisory guidance, enforced constraints, and masked (PII) columns.</td>
+</tr>
+<tr>
 <td><code>audit</code></td>
 <td>Inspect the query audit log.</td>
 </tr>
@@ -2555,6 +2559,21 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 <tr>
 <td><code>query run</code></td>
 <td>Validate and execute a read-only <code>SELECT</code>; prints results.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>rules</code></strong> — Inspect a solution's rule pack (advisory guidance + enforced constraints).</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rules show</code></td>
+<td>Show a solution's active rule pack: advisory guidance, enforced constraints (allowlist prefixes, deny objects, row caps), and masked (PII) columns — the CLI twin of the MCP <code>get_rules</code> tool. Accepts <code>--solution</code>/<code>-s</code> and <code>--format table\|json</code>.</td>
 </tr>
 </tbody>
 </table>
