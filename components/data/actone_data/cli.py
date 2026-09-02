@@ -1,0 +1,902 @@
+"""ActWise Data — read-only NL-to-SQL engine over ActOne ``v_acm_*`` views (CLI).
+
+Milestone 1 surface: ``actone-data ping``. The engine generates no SQL itself —
+the host LLM (skill / Copilot Studio) writes SELECTs; later milestones add
+schema/validate/execute commands.
+"""
+import sys
+
+# UTF-8 guard so Rich box-drawing / non-ASCII output is safe on Windows consoles.
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
+# Load .env before anything reads env vars: current working directory first,
+# then the source-checkout root (one level above this package). (docenter/cli.py)
+from pathlib import Path as _Path
+
+from actwise.paths import repo_root
+
+for _env_file in (_Path.cwd() / ".env", (repo_root() or _Path(__file__).resolve().parent.parent) / ".env"):
+    if _env_file.exists():
+        try:
+            from dotenv import load_dotenv as _load_dotenv
+
+            _load_dotenv(_env_file, override=False)  # .env sets defaults; real env vars win
+        except ImportError:
+            pass  # dotenv not installed — env vars must be set manually
+        break
+
+import typer  # noqa: E402
+from rich.console import Console  # noqa: E402
+from rich.table import Table  # noqa: E402
+
+app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="ActWise Data -> read-only query engine over ActOne v_acm_* views.",
+)
+console = Console()
+
+
+@app.callback()
+def _main():
+    """ActWise Data: read-only query engine over ActOne v_acm_* views."""
+
+
+def _resolve_or_exit(profile: str, dsn: str = None, **overrides):
+    """Resolve a ConnConfig from profile/env/flags, exiting 2 on bad profile."""
+    from actone_data import config as _config
+
+    try:
+        return _config.resolve(profile=profile, dsn=dsn, **overrides)
+    except KeyError as e:
+        console.print(f"[red]config error:[/red] {e}")
+        raise typer.Exit(2)
+
+
+@app.command(help="Test the DB connection: prints server version, schema, and the ActOne sentinel check.")
+def ping(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile from actone-data.yaml (default: built-in local)."),
+    host: str = typer.Option(None, "--host", help="DB host (overrides profile/env)."),
+    port: int = typer.Option(None, "--port", help="DB port."),
+    name: str = typer.Option(None, "--name", help="Database name."),
+    user: str = typer.Option(None, "--user", help="DB user."),
+    password: str = typer.Option(None, "--password", help="DB password (prefer env ACTONE_DB_PASSWORD)."),
+    schema: str = typer.Option(None, "--schema", help="Schema (default: actone)."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over discrete fields)."),
+):
+    from actone_data import config as _config
+    from actone_data import db
+
+    try:
+        cfg = _config.resolve(
+            profile=profile, host=host, port=port, name=name,
+            user=user, password=password, schema=schema, dsn=dsn,
+        )
+    except KeyError as e:
+        console.print(f"[red]config error:[/red] {e}")
+        raise typer.Exit(2)
+
+    try:
+        info = db.ping(cfg)
+    except Exception as e:  # psycopg.OperationalError and friends
+        console.print(f"[red]connection failed[/red] ({cfg.target}): {e}")
+        raise typer.Exit(1)
+
+    table = Table(show_header=False, box=None, pad_edge=False)
+    table.add_column(style="cyan", no_wrap=True)
+    table.add_column()
+    table.add_row("target", info["target"])
+    table.add_row("server", info["server_version"].split(" on ", 1)[0])
+    table.add_row("schema", f'{info["schema"]} (current: {info["current_schema"]})')
+    sentinel_ok = info["sentinel"]
+    table.add_row(
+        "sentinel",
+        "[green]found[/green] (acm_md_config_params)" if sentinel_ok
+        else "[yellow]not found[/yellow] (run: actone-local db-schema)",
+    )
+    table.add_row("v_acm_ views", str(info["v_acm_view_count"]))
+    console.print(table)
+    if not sentinel_ok:
+        raise typer.Exit(1)
+
+
+schema_app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="Introspect the live ActOne schema (v_acm_* views).",
+)
+app.add_typer(schema_app, name="schema")
+
+
+@schema_app.command("list", help="List the live v_acm_* views (or a solution's pack tables) and their column counts.")
+def schema_list(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile (default: built-in local)."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    names_only: bool = typer.Option(False, "--names-only", help="Print bare view names (no table), one per line."),
+    solution: str = typer.Option("actone", "--solution", "-s", help="List a solution's schema-pack tables (e.g. star, sam, cdd)."),
+):
+    from actone_data import db, schema_packs
+
+    key = (solution or "actone").strip().lower() or "actone"
+    if key != "actone":
+        pack = schema_packs.load(key)
+        if pack is None:
+            console.print(f"[red]no schema pack for solution:[/red] {key} "
+                          f"(available: {', '.join(schema_packs.available_solutions()) or 'none'})")
+            raise typer.Exit(1)
+        listing = schema_packs.list_pack_tables(pack)
+        if names_only:
+            for r in listing["views"]:
+                print(r["name"])
+            return
+        table = Table(box=None, pad_edge=False)
+        table.add_column("table", style="cyan", no_wrap=True)
+        table.add_column("cols", justify="right")
+        table.add_column("kind")
+        for r in listing["views"]:
+            table.add_row(r["name"], str(r["column_count"]), r["kind"])
+        console.print(table)
+        console.print(f"[bold]{listing['count']}[/bold] {key} tables (schema {listing['schema']})")
+        return
+
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    try:
+        views = db.introspect_views(cfg)
+    except Exception as e:
+        console.print(f"[red]introspection failed[/red] ({cfg.target}): {e}")
+        raise typer.Exit(1)
+
+    if names_only:
+        for v in views:
+            print(v["name"])
+        return
+
+    table = Table(box=None, pad_edge=False)
+    table.add_column("view", style="cyan", no_wrap=True)
+    table.add_column("cols", justify="right")
+    for v in views:
+        table.add_row(v["name"], str(v["column_count"]))
+    console.print(table)
+    console.print(f"[bold]{len(views)}[/bold] v_acm_ views (schema {cfg.schema})")
+
+
+@schema_app.command("build", help="Build the schema pack (introspection + doc enrichment) and write JSON.")
+def schema_build(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile (default: built-in local)."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    bundle: str = typer.Option(None, "--bundle", help="Doc bundle dir (default: ActOne 10.2 Implementer Guide)."),
+    doc_version: str = typer.Option(None, "--doc-version", help="Override the doc/pack version when the DB carries no stamp."),
+    out: str = typer.Option(None, "--out", help="Output path (default: bundled data/schema-pack-actone-<ver>.json)."),
+):
+    from pathlib import Path as _P
+
+    from actone_data import schema_pack
+
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    bundle_dir = _P(bundle) if bundle else None
+    try:
+        pack = schema_pack.build(cfg, bundle_dir=bundle_dir, doc_version=doc_version)
+    except Exception as e:
+        console.print(f"[red]build failed[/red] ({cfg.target}): {e}")
+        raise typer.Exit(1)
+    path = schema_pack.save(pack, _P(out) if out else None)
+
+    views = pack["views"]
+    allow = [v for v in views.values() if v["provenance"] != "doc_only"]
+    doc_only = [v for v in views.values() if v["provenance"] == "doc_only"]
+    introspected_only = [v for v in allow if v["provenance"] == "introspected"]
+    total_cols = sum(len(v["columns"]) for v in views.values())
+    documented_cols = sum(1 for v in views.values() for c in v["columns"] if c["description"])
+    preferred = sum(1 for v in allow if v["preferred"])
+    legacy = sum(1 for v in allow if v["family"] == "alert")
+
+    table = Table(show_header=False, box=None, pad_edge=False)
+    table.add_column(style="cyan", no_wrap=True)
+    table.add_column()
+    table.add_row("pack", str(path))
+    table.add_row("version", f'{pack["source"]["db_product_version"]} (source: {pack["source"]["db_version_source"]})')
+    table.add_row("views", f'{len(allow)} allowlisted (+{len(doc_only)} doc-only)')
+    table.add_row("provenance", f'{len(allow) - len(introspected_only)} both, {len(introspected_only)} introspected-only, {len(doc_only)} doc-only')
+    table.add_row("columns", f'{total_cols} ({documented_cols} with descriptions, {100*documented_cols//max(total_cols,1)}% coverage)')
+    table.add_row("preference", f'{preferred} preferred, {legacy} legacy alert')
+    console.print(table)
+
+
+@schema_app.command("show", help="Show a view's (or a solution table's) columns/keys from the schema pack.")
+def schema_show(
+    view: str = typer.Argument(..., help="View name (e.g. v_acm_items) or solution table name."),
+    pack: str = typer.Option(None, "--pack", help="Pack path (default: ACTONE_DATA_PACK or bundled)."),
+    solution: str = typer.Option("actone", "--solution", "-s", help="Read from a solution's schema pack (e.g. star, sam, cdd)."),
+):
+    from pathlib import Path as _P
+
+    from actone_data import schema_pack, schema_packs
+
+    key_sol = (solution or "actone").strip().lower() or "actone"
+    if key_sol != "actone":
+        sp = schema_packs.load(key_sol)
+        if sp is None:
+            console.print(f"[red]no schema pack for solution:[/red] {key_sol} "
+                          f"(available: {', '.join(schema_packs.available_solutions()) or 'none'})")
+            raise typer.Exit(1)
+        detail = schema_packs.describe_pack_table(sp, view)
+        if detail.get("error"):
+            console.print(f"[red]table not in pack:[/red] {detail['table']}"
+                          + (f"  (did you mean: {', '.join(detail['suggestions'])}?)" if detail.get("suggestions") else ""))
+            raise typer.Exit(1)
+        console.print(f"[bold]{detail['name']}[/bold]  schema={detail['schema']}  kind={detail['kind']}")
+        if detail.get("description"):
+            console.print(f"  {detail['description']}")
+        if detail.get("primary_key"):
+            console.print(f"  primary key: {', '.join(detail['primary_key'])}")
+        tbl = Table(box=None, pad_edge=False)
+        tbl.add_column("column", style="cyan", no_wrap=True)
+        tbl.add_column("type")
+        tbl.add_column("fk")
+        tbl.add_column("description", overflow="fold")
+        for c in detail["columns"]:
+            tbl.add_row(c["name"], c["type"] or "-", c.get("fk") or "", (c["description"] or "")[:70])
+        console.print(tbl)
+        return
+
+    try:
+        data = schema_pack.load(_P(pack) if pack else None)
+    except FileNotFoundError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+
+    key = view.strip().lower()
+    v = data["views"].get(key)
+    if v is None:
+        console.print(f"[red]view not in pack:[/red] {key}")
+        raise typer.Exit(1)
+
+    pref = "[green]preferred[/green]" if v["preferred"] else "[yellow]legacy[/yellow]" if v["family"] == "alert" else v["family"]
+    allow = "excluded from allowlist" if v["provenance"] == "doc_only" else "allowlisted"
+    console.print(f"[bold]{key}[/bold]  family={v['family']}  {pref}  ({allow}, provenance={v['provenance']})")
+    if v.get("description"):
+        console.print(f"  {v['description']}")
+    if v.get("related_views"):
+        console.print(f"  related (preferred equivalents): {', '.join(v['related_views'])}")
+    tbl = Table(box=None, pad_edge=False)
+    tbl.add_column("column", style="cyan", no_wrap=True)
+    tbl.add_column("type")
+    tbl.add_column("fk -> view")
+    tbl.add_column("prov")
+    tbl.add_column("description", overflow="fold")
+    for c in v["columns"]:
+        tbl.add_row(c["name"], c["type"] or "-", c["fk"] or "", c["provenance"], (c["description"] or "")[:70])
+    console.print(tbl)
+
+
+@schema_app.command("summary", help="Summarize the schema pack (view/column/coverage/preference counts).")
+def schema_summary(
+    pack: str = typer.Option(None, "--pack", help="Pack path (default: ACTONE_DATA_PACK or bundled)."),
+    solution: str = typer.Option("actone", "--solution", "-s", help="Summarize a solution's schema pack (e.g. star, sam, cdd)."),
+):
+    from pathlib import Path as _P
+
+    from actone_data import schema_pack, schema_packs
+
+    key_sol = (solution or "actone").strip().lower() or "actone"
+    if key_sol != "actone":
+        sp = schema_packs.load(key_sol)
+        if sp is None:
+            console.print(f"[red]no schema pack for solution:[/red] {key_sol} "
+                          f"(available: {', '.join(schema_packs.available_solutions()) or 'none'})")
+            raise typer.Exit(1)
+        s = schema_packs.table_summary(sp)
+        table = Table(show_header=False, box=None, pad_edge=False)
+        table.add_column(style="cyan", no_wrap=True)
+        table.add_column()
+        table.add_row("solution", key_sol)
+        table.add_row("schema", s["schema"])
+        table.add_row("version", s["version"] or "-")
+        table.add_row("tables", f'{s["table_count"]} ({s["described_count"]} with descriptions)')
+        table.add_row("kinds", ", ".join(f"{k}={v}" for k, v in s["kinds"].items()) or "-")
+        if s["auxiliary_schemas"]:
+            table.add_row("aux schemas", ", ".join(str(a) for a in s["auxiliary_schemas"]))
+        if s["draft"]:
+            table.add_row("draft", f'yes ({s["draft_reason"] or "unspecified"})')
+        console.print(table)
+        return
+
+    try:
+        data = schema_pack.load(_P(pack) if pack else None)
+    except FileNotFoundError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+
+    views = data["views"]
+    allow = [v for v in views.values() if v["provenance"] != "doc_only"]
+    doc_only = [v for v in views.values() if v["provenance"] == "doc_only"]
+    fams: dict[str, int] = {}
+    for v in allow:
+        fams[v["family"]] = fams.get(v["family"], 0) + 1
+    total_cols = sum(len(v["columns"]) for v in views.values())
+    fk_cols = sum(1 for v in views.values() for c in v["columns"] if c["fk"])
+
+    table = Table(show_header=False, box=None, pad_edge=False)
+    table.add_column(style="cyan", no_wrap=True)
+    table.add_column()
+    table.add_row("built_at", data.get("built_at", "-"))
+    table.add_row("version", f'{data["source"]["db_product_version"]} ({data["source"]["db_version_source"]})')
+    table.add_row("bundle", data["source"]["doc_bundle"])
+    table.add_row("views", f'{len(allow)} allowlisted (+{len(doc_only)} doc-only)')
+    table.add_row("families", ", ".join(f"{k}={v}" for k, v in sorted(fams.items())))
+    table.add_row("preferred", str(sum(1 for v in allow if v["preferred"])))
+    table.add_row("columns", f"{total_cols} ({fk_cols} with FK)")
+    console.print(table)
+
+
+query_app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="Validate or run a read-only SELECT over the v_acm_* views.",
+)
+app.add_typer(query_app, name="query")
+
+
+@query_app.command("validate", help="Dry-run the guardrail pipeline on a SQL string (no execution).")
+def query_validate(
+    sql: str = typer.Argument(..., help="SQL to validate."),
+    profile: str = typer.Option("local", "--profile", "-p", help="Profile used to fetch the live allowlist."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    solution: str = typer.Option("actone", "--solution", "-s", help="Solution rule/schema pack (e.g. star, sam, cdd)."),
+    max_rows: int = typer.Option(100, "--max-rows", help="Row limit to inject/clamp to (cap 1000)."),
+):
+    from actone_data import audit, db, guardrails, rules, schema_packs
+
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    constraints = rules.to_constraints(rules.load(solution=solution))
+    surface = schema_packs.surface(solution)
+    eff_schema = cfg.schema if surface is None else cfg.solution_schema(surface["schema"])
+    try:
+        with db.connect(cfg, schema=(None if surface is None else eff_schema)) as conn, conn.cursor() as cur:
+            if surface is None:
+                allowed = db._live_view_names(cur, eff_schema, constraints.allowlist_prefixes)
+            else:
+                allowed = db.solution_allowlist(cur, eff_schema, surface["tables"])
+    except Exception as e:
+        console.print(f"[red]connection failed[/red] ({cfg.target}): {e}")
+        raise typer.Exit(1)
+
+    res = guardrails.validate(sql, allowed, eff_schema, max_rows=max_rows, constraints=constraints)
+    audit.record(transport="cli", question="", sql=sql, ok=res["ok"],
+                 sql_used=res["sql_used"],
+                 rejected_reason=None if res["ok"] else "; ".join(res["errors"]),
+                 db=cfg.target, env=profile)
+    if res["ok"]:
+        console.print("[green]OK[/green]")
+        console.print(f"  views: {', '.join(res['views_used'])}")
+        console.print(f"  limit_injected: {res['limit_injected']}")
+        console.print(f"  sql_used: {res['sql_used']}")
+    else:
+        console.print("[red]REJECTED[/red]")
+        for e in res["errors"]:
+            console.print(f"  - {e}")
+        raise typer.Exit(1)
+
+
+@query_app.command("run", help="Validate and execute a read-only SELECT; prints results.")
+def query_run(
+    sql: str = typer.Argument(..., help="SQL to run."),
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile (default: built-in local)."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    solution: str = typer.Option("actone", "--solution", "-s", help="Solution rule/schema pack (e.g. star, sam, cdd)."),
+    max_rows: int = typer.Option(100, "--max-rows", help="Max rows to return (cap 1000)."),
+    question: str = typer.Option("", "--question", "-q", help="The user question, recorded for audit."),
+    fmt: str = typer.Option("table", "--format", "-f", help="Output format: table | json | csv."),
+):
+    import json as _json
+
+    from actone_data import audit, db, rules, schema_packs
+    from actone_data.guardrails import GuardrailError
+
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    constraints = rules.to_constraints(rules.load(solution=solution))
+    surface = schema_packs.surface(solution)
+    eff_schema = None if surface is None else cfg.solution_schema(surface["schema"])
+    pack_tables = None if surface is None else surface["tables"]
+    try:
+        res = db.run_query(cfg, sql, max_rows=max_rows, constraints=constraints,
+                           schema=eff_schema, allowed=pack_tables)
+    except GuardrailError as ge:
+        audit.record(transport="cli", question=question, sql=sql, ok=False,
+                     rejected_reason="; ".join(ge.errors), db=cfg.target, env=profile)
+        console.print("[red]REJECTED[/red]")
+        for e in ge.errors:
+            console.print(f"  - {e}")
+        raise typer.Exit(1)
+    except Exception as e:
+        audit.record(transport="cli", question=question, sql=sql, ok=False,
+                     rejected_reason=f"execution error: {e}", db=cfg.target, env=profile)
+        console.print(f"[red]execution failed[/red]: {e}")
+        raise typer.Exit(1)
+
+    audit.record(transport="cli", question=question, sql=res["sql_used"], ok=True,
+                 sql_used=res["sql_used"], rows=res["row_count"],
+                 truncated=res["truncated"], duration_ms=res["duration_ms"],
+                 db=cfg.target, env=profile)
+
+    if fmt == "json":
+        console.print_json(_json.dumps({"columns": res["columns"], "rows": res["rows"]}))
+    elif fmt == "csv":
+        import csv
+        import io
+        buf = io.StringIO()
+        w = csv.writer(buf)
+        w.writerow(res["columns"])
+        w.writerows(res["rows"])
+        print(buf.getvalue().rstrip("\n"))
+    else:
+        tbl = Table(box=None, pad_edge=False)
+        for c in res["columns"]:
+            tbl.add_column(c, overflow="fold")
+        for row in res["rows"]:
+            tbl.add_row(*["" if v is None else str(v) for v in row])
+        console.print(tbl)
+    trunc = " [yellow](truncated)[/yellow]" if res["truncated"] else ""
+    masked = res.get("masked_columns") or []
+    mask_note = (f"; [yellow]masked (PII): {', '.join(masked)}[/yellow]" if masked else "")
+    console.print(
+        f"[dim]{res['row_count']} rows{trunc} in {res['duration_ms']} ms; "
+        f"limit_injected={res['limit_injected']}{mask_note}; sql: {res['sql_used']}[/dim]"
+    )
+
+
+audit_app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="Inspect the query audit log.",
+)
+app.add_typer(audit_app, name="audit")
+
+
+rules_app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="Inspect a solution's rule pack (advisory guidance + enforced constraints).",
+)
+app.add_typer(rules_app, name="rules")
+
+
+@rules_app.command("show", help="Show a solution's active rule pack: advisory guidance + effective enforced constraints.")
+def rules_show(
+    solution: str = typer.Option("actone", "--solution", "-s", help="Solution rule pack (e.g. star, sam, cdd, cdd_prf)."),
+    fmt: str = typer.Option("table", "--format", "-f", help="Output format: table | json."),
+):
+    import json as _json
+
+    from actone_data import rules
+
+    key = (solution or "actone").strip().lower() or "actone"
+    pack = rules.load(solution=key)
+    advice = rules.advisory(pack)
+    constraints = rules.to_constraints(pack)
+    raw_constraints = pack.get("constraints", {}) if isinstance(pack.get("constraints"), dict) else {}
+    default_max_rows = raw_constraints.get("default_max_rows", 100)
+    if not isinstance(default_max_rows, int):
+        default_max_rows = 100
+    masked = raw_constraints.get("masked_columns", [])
+    result = {
+        **advice,
+        "constraints": {
+            "allowlist_prefixes": list(constraints.allowlist_prefixes),
+            "deny_objects": sorted(constraints.deny_objects),
+            "default_max_rows": default_max_rows,
+            "row_cap": constraints.row_cap,
+            "masked_columns": list(masked) if isinstance(masked, list) else [],
+        },
+    }
+
+    if fmt == "json":
+        console.print_json(_json.dumps(result, default=str))
+        return
+
+    c = result["constraints"]
+    meta = Table(show_header=False, box=None, pad_edge=False)
+    meta.add_column(style="cyan", no_wrap=True)
+    meta.add_column()
+    meta.add_row("solution", key)
+    meta.add_row("allowlist", ", ".join(c["allowlist_prefixes"]) or "-")
+    meta.add_row("row cap", f'{c["default_max_rows"]} default / {c["row_cap"]} max')
+    if c["deny_objects"]:
+        meta.add_row("deny objects", ", ".join(c["deny_objects"]))
+    if c["masked_columns"]:
+        meta.add_row("masked (PII)", ", ".join(c["masked_columns"]))
+    console.print(meta)
+
+    lines = result.get("rules") or []
+    if lines:
+        console.print("\n[bold]Guidance[/bold]")
+        for line in lines:
+            console.print(f"  • {line}")
+
+    examples = result.get("examples") or []
+    if examples:
+        console.print("\n[bold]Examples[/bold]")
+        for ex in examples:
+            if isinstance(ex, dict):
+                q = ex.get("question") or ex.get("q") or ""
+                sql = ex.get("sql") or ""
+                if q:
+                    console.print(f"  [dim]Q:[/dim] {q}")
+                if sql:
+                    console.print(f"  [dim]SQL:[/dim] {sql}")
+            else:
+                console.print(f"  {ex}")
+
+
+perf_app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="Read-only performance diagnostics (fixed server-authored queries).",
+)
+app.add_typer(perf_app, name="perf")
+
+
+def _perf_print(result: dict, fmt: str = "json"):
+    import json as _json
+    console.print_json(_json.dumps(result, default=str))
+
+
+def _perf_run(fn, cfg):
+    """Run a perf diagnostic with error handling + audit (category=perf)."""
+    from actone_data import audit
+    tool = getattr(fn, "__name__", "perf")
+    try:
+        result = fn(cfg)
+    except Exception as e:  # noqa: BLE001
+        audit.record(transport="cli", question=tool, sql=f"[perf:{tool}]", ok=False,
+                     rejected_reason=f"perf error: {e}", db=cfg.target, category="perf")
+        console.print(f"[red]perf failed[/red] ({cfg.target}): {e}")
+        raise typer.Exit(1)
+    audit.record(transport="cli", question=tool, sql=f"[perf:{tool}]", ok=True,
+                 db=cfg.target, category="perf")
+    return result
+
+
+@perf_app.command("extensions", help="Which perf extensions are installed (pg_stat_statements, pgstattuple, hypopg).")
+def perf_extensions(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    _perf_print(_perf_run(perf.extensions, cfg))
+
+
+@perf_app.command("health", help="Cache hit ratio, rollbacks/deadlocks, connections, wraparound headroom.")
+def perf_health(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    _perf_print(_perf_run(perf.health_check, cfg))
+
+
+@perf_app.command("top-queries", help="Worst queries from pg_stat_statements (sort: total|mean|io|calls).")
+def perf_top_queries(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    sort: str = typer.Option("total", "--sort", help="total | mean | io | calls."),
+    limit: int = typer.Option(20, "--limit", help="Rows to return (cap 100)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    _perf_print(_perf_run(lambda c: perf.top_queries(c, sort=sort, limit=limit), cfg))
+
+
+@perf_app.command("indexes", help="Unused and invalid indexes (drop / REINDEX candidates).")
+def perf_indexes(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    _perf_print(_perf_run(perf.index_issues, cfg))
+
+
+@perf_app.command("missing-indexes", help="Tables with heavy sequential scans (indexing hotspots).")
+def perf_missing_indexes(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    _perf_print(_perf_run(perf.missing_indexes, cfg))
+
+
+@perf_app.command("vacuum", help="Dead-tuple accumulation + autovacuum recency/settings.")
+def perf_vacuum(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    _perf_print(_perf_run(perf.vacuum_health, cfg))
+
+
+@perf_app.command("bloat", help="Table bloat via pgstattuple (note if extension absent).")
+def perf_bloat(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    _perf_print(_perf_run(perf.bloat_estimate, cfg))
+
+
+@perf_app.command("config", help="Key planner / memory / autovacuum settings (advisory).")
+def perf_config(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    _perf_print(_perf_run(perf.config_review, cfg))
+
+
+@perf_app.command("report", help="Scored recommendation report (rolls up all checks).")
+def perf_report_cmd(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    fmt: str = typer.Option("markdown", "--format", "-f", help="markdown | json."),
+    solution: str = typer.Option("actone", "--solution", "-s",
+        help="Scope table/index/vacuum checks to a solution schema (e.g. sam, cdd, cdd_prf)."),
+):
+    from actone_data import perf
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    report = _perf_run(lambda c: perf.perf_report(c, solution=solution), cfg)
+    if fmt == "json":
+        _perf_print(report)
+        return
+    if not report.get("ok"):
+        console.print(f"[red]report failed[/red]: {report.get('errors') or report.get('error')}")
+        raise typer.Exit(1)
+    console.print(perf.render_report(report))
+
+
+@perf_app.command("explain", help="EXPLAIN (FORMAT JSON) a guardrail-validated SELECT.")
+def perf_explain(
+    sql: str = typer.Argument(..., help="SELECT to explain."),
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    solution: str = typer.Option("actone", "--solution", "-s", help="Solution surface for the allowlist."),
+    analyze: bool = typer.Option(False, "--analyze", help="Execute for real timings (read-only). Default off."),
+):
+    from actone_data import perf, rules, schema_packs
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    constraints = rules.to_constraints(rules.load(solution=solution))
+    surface = schema_packs.surface(solution)
+    eff_schema = None if surface is None else cfg.solution_schema(surface["schema"])
+    pack_tables = None if surface is None else surface["tables"]
+    try:
+        result = perf.explain_query(cfg, sql, analyze=analyze, constraints=constraints,
+                                    schema=eff_schema, allowed=pack_tables)
+    except Exception as e:
+        console.print(f"[red]explain failed[/red]: {e}")
+        raise typer.Exit(1)
+    _perf_print(result)
+
+
+@audit_app.command("tail", help="Show the most recent audit records.")
+def audit_tail(
+    n: int = typer.Option(20, "--n", "-n", help="Number of records to show."),
+):
+    from actone_data import audit
+
+    records = audit.tail(n)
+    if not records:
+        console.print("[dim]no audit records[/dim]")
+        return
+    tbl = Table(box=None, pad_edge=False)
+    tbl.add_column("ts", style="cyan", no_wrap=True)
+    tbl.add_column("actor")
+    tbl.add_column("env")
+    tbl.add_column("ok")
+    tbl.add_column("rows")
+    tbl.add_column("detail", overflow="fold")
+    for r in records:
+        ok = "[green]ok[/green]" if r.get("ok") else "[red]rej[/red]"
+        detail = r.get("sql_used") or r.get("rejected_reason") or r.get("sql") or ""
+        tbl.add_row(r.get("ts", ""), str(r.get("actor", "")), str(r.get("env") or ""), ok,
+                    str(r.get("rows", "")) if r.get("rows") is not None else "",
+                    detail[:80])
+    console.print(tbl)
+
+
+env_app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="List the configured ActOne environments (DB profiles).",
+)
+app.add_typer(env_app, name="env")
+
+
+@env_app.command("list", help="List configured environments (metadata only; never passwords).")
+def env_list():
+    from actone_data import config as _config
+
+    envs = _config.list_profiles()
+    tbl = Table(box=None, pad_edge=False)
+    tbl.add_column("name", style="cyan", no_wrap=True)
+    tbl.add_column("host")
+    tbl.add_column("port")
+    tbl.add_column("database")
+    tbl.add_column("user")
+    tbl.add_column("schema")
+    tbl.add_column("pwd")
+    tbl.add_column("default")
+    for e in envs:
+        tbl.add_row(
+            e["name"],
+            "[dim]dsn[/dim]" if e["dsn"] else e["host"],
+            "" if e["dsn"] else str(e["port"]),
+            "" if e["dsn"] else e["database"],
+            "" if e["dsn"] else e["user"],
+            "" if e["dsn"] else e["schema"],
+            "[green]yes[/green]" if e["password_configured"] else "[red]no[/red]",
+            "*" if e["is_default"] else "",
+        )
+    console.print(tbl)
+
+
+@app.command(help="Detect the ActOne product version from the DB (falls back to the bundled doc version).")
+def version(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile (default: built-in local)."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+):
+    from actone_data import config as _config
+    from actone_data import db
+
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    try:
+        info = db.detect_version(cfg)
+    except Exception as e:
+        console.print(f"[red]version detect failed[/red] ({cfg.target}): {e}")
+        raise typer.Exit(1)
+
+    table = Table(show_header=False, box=None, pad_edge=False)
+    table.add_column(style="cyan", no_wrap=True)
+    table.add_column()
+    if info["version"]:
+        table.add_row("detected", f'[green]{info["version"]}[/green]')
+        table.add_row("source", f'db ({info["detail"]})')
+    else:
+        table.add_row("detected", "[yellow]not stamped in DB[/yellow]")
+        table.add_row("fallback", f'{_config.DEFAULT_DOC_VERSION} (bundled doc version)')
+        table.add_row("source", info["detail"])
+    console.print(table)
+
+
+docs_app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="Parse the v_acm_* doc pages (descriptions + FK graph).",
+)
+app.add_typer(docs_app, name="docs")
+
+
+@docs_app.command("enrich", help="Parse the v_acm_* doc pages and resolve the FK graph.")
+def docs_enrich_cmd(
+    profile: str = typer.Option("local", "--profile", "-p", help="Profile used to introspect live views for FK reconciliation."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    bundle: str = typer.Option(None, "--bundle", help="Doc bundle dir (default: the ActOne 10.2 Implementer Guide)."),
+    page: str = typer.Option(None, "--page", help="Dump resolved columns/FKs for a single view (e.g. v_acm_items)."),
+    offline: bool = typer.Option(False, "--offline", help="Skip DB introspection; reconcile FKs against the parsed page names only."),
+):
+    from pathlib import Path as _P
+
+    from actone_data import db, docs_enrich
+
+    known = None
+    if not offline:
+        cfg = _resolve_or_exit(profile, dsn=dsn)
+        try:
+            known = {v["name"] for v in db.introspect_views(cfg)}
+        except Exception as e:
+            console.print(f"[yellow]note:[/yellow] DB unreachable ({e}); reconciling against doc names only.")
+
+    bundle_dir = _P(bundle) if bundle else docs_enrich.DEFAULT_BUNDLE
+    if not bundle_dir.exists():
+        console.print(f"[red]bundle not found:[/red] {bundle_dir}")
+        raise typer.Exit(1)
+
+    views = docs_enrich.enrich(bundle_dir, known_views=known)
+    files = sorted(bundle_dir.glob("v_acm_*.md"))
+
+    if page:
+        key = page.strip().lower()
+        dv = views.get(key)
+        if dv is None:
+            console.print(f"[red]no doc page for view:[/red] {key}")
+            raise typer.Exit(1)
+        console.print(f"[bold]{dv.name}[/bold]  ({len(dv.columns)} columns)  {dv.source_url or ''}")
+        if dv.description:
+            console.print(f"  {dv.description}")
+        tbl = Table(box=None, pad_edge=False)
+        tbl.add_column("column", style="cyan", no_wrap=True)
+        tbl.add_column("fk -> view")
+        tbl.add_column("source")
+        for col in dv.columns:
+            if col.fk or col.fk_raw:
+                tbl.add_row(col.name, col.fk or f"[red]{col.fk_raw} (unresolved)[/red]", col.fk_source or "")
+        console.print(tbl)
+        for w in dv.warnings:
+            console.print(f"  [yellow]![/yellow] {w}")
+        return
+
+    failures = [v.name for v in views.values() if any("no field table" in w for w in v.warnings)]
+    total_cols = sum(len(v.columns) for v in views.values())
+    by_source = {"parenthetical": 0, "learned": 0, "naming": 0}
+    unresolved = 0
+    corrections = 0
+    for v in views.values():
+        for c in v.columns:
+            if c.fk_source in by_source and c.fk:
+                by_source[c.fk_source] += 1
+            if c.fk_raw and not c.fk:
+                unresolved += 1
+            elif c.fk and c.fk_raw:
+                corrections += 1
+    console.print(f"parsed [bold]{len(files)}[/bold] pages ([bold]{len(views)}[/bold] unique views), [bold]{len(failures)}[/bold] failures; {total_cols} columns")
+    dupes = len(files) - len(views)
+    if dupes:
+        console.print(f"[yellow]note:[/yellow] {dupes} duplicate page_title(s) collapsed (e.g. v_acm_items_findings_reasons)")
+    console.print(
+        f"FK edges: parenthetical={by_source['parenthetical']} "
+        f"learned={by_source['learned']} naming={by_source['naming']} "
+        f"| corrections={corrections} unresolved={unresolved}"
+    )
+    if failures:
+        console.print(f"[red]failed pages:[/red] {', '.join(failures)}")
+
+
+@app.command(help="Run the NL->SQL eval set through the guardrail + execute path and print a scoreboard.")
+def eval(
+    profile: str = typer.Option("local", "--profile", "-p", help="Named profile (default: built-in local)."),
+    dsn: str = typer.Option(None, "--dsn", help="Full libpq DSN (wins over profile/env)."),
+    set_path: str = typer.Option(None, "--set", help="A single eval-set YAML (default: all under actone_data/data/evals/)."),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Show per-case detail (views/rows or failure reasons)."),
+):
+    from pathlib import Path as _P
+
+    from actone_data import evals
+
+    cfg = _resolve_or_exit(profile, dsn=dsn)
+    try:
+        results = evals.run(cfg, _P(set_path) if set_path else None)
+    except FileNotFoundError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+
+    tbl = Table(box=None, pad_edge=False)
+    tbl.add_column("result", no_wrap=True)
+    tbl.add_column("id", style="cyan", no_wrap=True)
+    tbl.add_column("expect", no_wrap=True)
+    tbl.add_column("detail", overflow="fold")
+    for r in results:
+        mark = "[green]PASS[/green]" if r.passed else "[red]FAIL[/red]"
+        detail = r.detail if r.passed else "; ".join(r.fails)
+        if r.passed and not verbose:
+            detail = ""
+        tbl.add_row(mark, r.id, r.expect, detail)
+    console.print(tbl)
+
+    passed = sum(1 for r in results if r.passed)
+    total = len(results)
+    color = "green" if passed == total else "red"
+    console.print(f"[{color}]{passed}/{total} passed[/{color}]")
+    if passed != total:
+        raise typer.Exit(1)
+
+
+if __name__ == "__main__":
+    app()
