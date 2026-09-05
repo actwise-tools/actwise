@@ -1,0 +1,37 @@
+# ActWise Data — environment (DB profile) catalog.
+#
+# Copy to `actone-data.yaml` (gitignored) and edit. Each profile under `profiles:`
+# is an "environment" the CLI (`--profile <name>`) and the MCP server (`env` tool
+# argument, surfaced by `list_environments`) can target.
+#
+# Do NOT put passwords here. Supply them per-profile via `actone-data.secrets.yaml`
+# (see actone-data.secrets.example.yaml) or the env var `ACTONE_DB_PASSWORD__<PROFILE>`.
+#
+# The built-in `local` profile (Docker actone-local defaults) always exists even with
+# no file present; override it below only if your local DB differs.
+
+profiles:
+  # local:                 # optional override of the built-in local defaults
+  #   host: localhost
+  #   port: 5432
+  #   name: actone
+  #   user: actone
+  #   schema: actone
+
+  dev:
+    host: actone-dev.internal.example.com
+    port: 5432
+    name: actone
+    user: actone_ro          # prefer a least-privilege, read-only DB user
+    schema: actone
+
+  # prod:                    # exercise caution exposing prod to a chat agent
+  #   host: actone-prod.internal.example.com
+  #   port: 5432
+  #   name: actone
+  #   user: actone_ro
+  #   schema: actone
+
+  # You can also use a full libpq DSN instead of discrete fields:
+  # staging:
+  #   dsn: "postgresql://actone_ro@actone-staging.internal:5432/actone"
