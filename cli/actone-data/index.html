@@ -2456,9 +2456,11 @@ is exposed as the <a href="../../mcp/actone-data-mcp/"><code>actone-data-mcp</co
 by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 <a href="../../agents/data/">ActWise Data</a> Copilot Studio agent.</p>
 <h2 id="install-enable">Install / enable<a class="headerlink" href="#install-enable" title="Permanent link">&para;</a></h2>
-<p>Installed with the <code>actwise</code> distribution. Configure a DB profile in <code>actone-data.yaml</code>
-(host, port, name, <strong>read-only</strong> user, schema) with the password in
-<code>actone-data.secrets.yaml</code> — see <a href="../../install/">Install</a>.</p>
+<p>Installed with the <code>actwise</code> distribution. Also available under the <code>actwise-data</code>
+alias (the internal <code>actone-data</code> name stays working). Configure a DB profile in
+<code>actwise-data.yaml</code> (host, port, name, <strong>read-only</strong> user, schema) with the password in
+<code>actwise-data.secrets.yaml</code> — the legacy <code>actone-data.yaml</code> / <code>actone-data.secrets.yaml</code>
+names are still resolved as a fallback; see <a href="../../install/">Install</a>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">actone-data</span> <span class="n">ping</span>     <span class="c"># verify the connection + ActOne sentinel check</span>
 </code></pre></div>
 <h2 id="command-reference">Command reference<a class="headerlink" href="#command-reference" title="Permanent link">&para;</a></h2>
@@ -2485,6 +2487,10 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 <tr>
 <td><code>schema</code></td>
 <td>Introspect the live ActOne schema (<code>v_acm_*</code> views) or a solution's schema pack (<code>--solution</code>).</td>
+</tr>
+<tr>
+<td><code>solutions</code></td>
+<td>Business solutions — a product's licensed fraud lines (e.g. IFM Retail/Card/NAF) + client detection.</td>
 </tr>
 <tr>
 <td><code>query</code></td>
@@ -2530,6 +2536,10 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 <td>List the live <code>v_acm_*</code> views and their column counts.</td>
 </tr>
 <tr>
+<td><code>schema solutions</code></td>
+<td>List every grounded surface — the ActOne platform plus each solution pack — with schema, version, object counts, description coverage, and draft/ready status (<code>--format table\|json</code>).</td>
+</tr>
+<tr>
 <td><code>schema build</code></td>
 <td>Build the schema pack (introspection + doc enrichment) and write JSON.</td>
 </tr>
@@ -2559,6 +2569,25 @@ by the <a href="../../skills/actone-data/">actone-data</a> skill; it grounds the
 <tr>
 <td><code>query run</code></td>
 <td>Validate and execute a read-only <code>SELECT</code>; prints results.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>solutions</code></strong> — Business solutions: a product's licensed fraud lines + client detection.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>solutions list</code></td>
+<td>List a product's business solutions + add-ons and their DB markers (offline, from the business-solution catalog). Accepts <code>--product</code>/<code>-P</code> and <code>--format table\|json</code>.</td>
+</tr>
+<tr>
+<td><code>solutions detect</code></td>
+<td>Detect which business solutions a live deployment actually runs — introspects the resolved schemas and matches catalog markers (<code>present</code>/<code>absent</code>/<code>config-only</code>). Scoped by <code>--profile</code>/<code>-p</code> + <code>--product</code>/<code>-P</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -2621,7 +2650,7 @@ model/CLI <em>names a check</em>, it never writes catalog SQL).</p>
 </tr>
 <tr>
 <td><code>perf report</code></td>
-<td>Scored recommendation report rolling up all checks (findings carry a <code>source_url</code> doc citation).</td>
+<td>Scored recommendation report rolling up all checks — including advisory <code>CREATE INDEX</code> candidates for unindexed foreign keys (findings carry a <code>source_url</code> doc citation).</td>
 </tr>
 <tr>
 <td><code>perf explain</code></td>
@@ -2830,7 +2859,7 @@ model/CLI <em>names a check</em>, it never writes catalog SQL).</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   

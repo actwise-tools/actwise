@@ -2665,7 +2665,7 @@ parallel <strong>performance diagnostics</strong> surface (Surface B) runs fixed
 server-authored catalog queries — the model <em>names a tool</em>, it never writes
 catalog SQL. The engine holds <strong>no LLM key and no write path</strong>.</p>
 <h2 id="two-tool-surfaces">Two tool surfaces<a class="headerlink" href="#two-tool-surfaces" title="Permanent link">&para;</a></h2>
-<p>The server exposes <strong>17 read-only tools</strong> across two surfaces:</p>
+<p>The server exposes <strong>20 read-only tools</strong> across two surfaces:</p>
 <ol>
 <li><strong>Surface A — NL-to-SQL grounding + execution</strong> (solution-aware): discover a
    solution's schema/rules, then validate and run a single guardrailed <code>SELECT</code>.</li>
@@ -2685,7 +2685,7 @@ catalog SQL. The engine holds <strong>no LLM key and no write path</strong>.</p>
   stdio.</li>
 </ul>
 <h2 id="tools-exposed">Tools exposed<a class="headerlink" href="#tools-exposed" title="Permanent link">&para;</a></h2>
-<p>Enumerated from <code>components/data/actone_data_mcp/server.py</code> — <strong>17 <code>@mcp.tool</code>
+<p>Enumerated from <code>components/data/actone_data_mcp/server.py</code> — <strong>20 <code>@mcp.tool</code>
 registrations, all read-only</strong>, in three groups.</p>
 <p><strong>Grounding (offline — served from the bundled schema/rule packs, no DB):</strong></p>
 <table>
@@ -2697,12 +2697,20 @@ registrations, all read-only</strong>, in three groups.</p>
 </thead>
 <tbody>
 <tr>
+<td><code>list_solutions</code></td>
+<td>Discover every grounded surface — the ActOne platform plus each solution pack — with <code>surface</code>, <code>schema</code>, <code>version</code>, object counts, description coverage, and <code>draft</code> status. Call first to pick a <code>solution</code>.</td>
+</tr>
+<tr>
+<td><code>list_business_solutions</code></td>
+<td>A product's licensed <strong>business solutions</strong> (IFM Remote/Commercial/Private Banking, Card, Deposit, Authentication-IQ, New Account Fraud) + optional add-ons, each with official name, aliases, license flag, detection processes, and <code>v_ff_*</code>/table markers. A business solution is a license-driven subset of ONE install (not a separate installer, except New Account Fraud).</td>
+</tr>
+<tr>
 <td><code>get_schema_summary</code></td>
 <td>Overview of the query surface — DB version, schema, view/table counts by family, preference + global rules. Accepts <code>solution</code> to summarize a solution pack. Call once, first.</td>
 </tr>
 <tr>
 <td><code>get_rules</code></td>
-<td>The solution's <strong>rule pack</strong>: query conventions, preferred/deprecated views, masked (PII) columns, and any solution-specific constraints the model must honor.</td>
+<td>The solution's <strong>rule pack</strong> (doc-mined from the Actimize Implementer/Installation guides): query conventions, preferred/deprecated views, masked (PII) columns, and any solution-specific constraints the model must honor. A base ActOne pack of universal best practices is inherited by every solution.</td>
 </tr>
 <tr>
 <td><code>list_views</code></td>
@@ -2730,6 +2738,10 @@ registrations, all read-only</strong>, in three groups.</p>
 <tr>
 <td><code>run_query</code></td>
 <td>Validate <strong>and</strong> execute a read-only SELECT: columns, rows, row_count, truncated, sql_used, duration, and <code>masked_columns</code> (redacted PII). Scoped by <code>env</code> + <code>solution</code>.</td>
+</tr>
+<tr>
+<td><code>detect_business_solutions</code></td>
+<td>Which <strong>business solutions</strong> a live deployment actually runs — introspects the resolved IDB/app schemas, matches catalog markers, and returns <code>present</code>/<code>absent</code>/<code>config_only</code> so grounding can be scoped to the fraud lines a client is licensed for. Scoped by <code>env</code> + <code>solution</code>.</td>
 </tr>
 <tr>
 <td><code>list_environments</code></td>
@@ -2780,7 +2792,7 @@ registrations, all read-only</strong>, in three groups.</p>
 </tr>
 <tr>
 <td><code>perf_report</code></td>
-<td>Scored recommendation report rolling up all checks — each finding carries severity, evidence, fix, and a <code>source_url</code> doc citation. Accepts <code>solution</code> to scope table/index/vacuum checks to that solution's schema.</td>
+<td>Scored recommendation report rolling up all checks — including advisory <code>CREATE INDEX</code> candidates for unindexed foreign keys; each finding carries severity, evidence, fix, and a <code>source_url</code> doc citation. Accepts <code>solution</code> to scope table/index/vacuum checks to that solution's schema.</td>
 </tr>
 <tr>
 <td><code>explain_query</code></td>
@@ -2869,10 +2881,10 @@ filtered by <code>topic</code>. Legacy <code>v_acm_alert*</code> views are retur
     K --&gt;|yes| O["result: columns(name·type·description·fk),&lt;br/&gt;family, preferred, queryable,&lt;br/&gt;related_views, source_url"]</code></pre>
 <h3 id="list_environments"><code>list_environments</code><a class="headerlink" href="#list_environments" title="Permanent link">&para;</a></h3>
 <p>Lists the <strong>database (DATA)</strong> connection profiles for read-only SQL — metadata
-only. Reads <code>actone-data.yaml</code> via <code>config.list_profiles()</code>; passwords are never
+only. Reads <code>actwise-data.yaml</code> via <code>config.list_profiles()</code>; passwords are never
 returned.</p>
 <pre class="mermaid"><code>flowchart TD
-    A["list_environments()"] --&gt; C["config.list_profiles()&lt;br/&gt;actone-data.yaml"]
+    A["list_environments()"] --&gt; C["config.list_profiles()&lt;br/&gt;actwise-data.yaml"]
     C --&gt; O["result: default, environments&lt;br/&gt;host·port·database·user·schema·dsn&lt;br/&gt;password_configured (never password)"]</code></pre>
 <h3 id="validate_sql"><code>validate_sql</code><a class="headerlink" href="#validate_sql" title="Permanent link">&para;</a></h3>
 <p>Dry-runs the guardrail on a SQL string — <strong>no execution</strong>. Resolves the target
@@ -2972,10 +2984,34 @@ the deployed schema name automatically via the environment's schema prefix.</p>
 <td>Suspicious Transaction Activity Reporting.</td>
 </tr>
 <tr>
-<td>WLF / IFM</td>
-<td><code>wlf_lm</code> / <code>ifm_app</code></td>
+<td>IFM</td>
+<td><code>ifm_app</code></td>
+<td>✅</td>
+<td>Integrated Fraud Management application schema (live-validated on <code>fhba</code>).</td>
+</tr>
+<tr>
+<td>IFM IDB (data)</td>
+<td><code>ff_idb_data</code></td>
+<td>✅</td>
+<td>Investigation Database — where ingested transactions &amp; analytics results land (DART/reporting). 155 tables + 206 <code>v_ff_*</code>/<code>v_acm_*</code> views (view columns live-typed on <code>fhba</code>; view + column descriptions doc-mined from the IFM 11.2.1 Implementer Guide — 266/361 objects described). Separate DB.</td>
+</tr>
+<tr>
+<td>IFM IDB (staging)</td>
+<td><code>ff_idb_stg</code></td>
+<td>✅</td>
+<td>IDB staging buffer — a transient ETL load buffer, <strong>not</strong> a reporting surface (rules steer to IFM IDB data).</td>
+</tr>
+<tr>
+<td>WLF</td>
+<td><code>wlf_lm</code></td>
 <td>draft</td>
 <td>Package-DDL-derived; pending live validation.</td>
+</tr>
+<tr>
+<td>CTR</td>
+<td><code>ctr_app</code></td>
+<td>draft</td>
+<td>Currency Transaction Reporting — placeholder pack (encrypted package); filings surface as ActOne work items.</td>
 </tr>
 </tbody>
 </table>
@@ -3012,30 +3048,33 @@ authoritative PostgreSQL documentation for that dimension.</p>
     SCOPE --&gt; H</code></pre>
 <h2 id="transport-run">Transport &amp; run<a class="headerlink" href="#transport-run" title="Permanent link">&para;</a></h2>
 <p>Runs as <strong>stdio or HTTP</strong>. Console script from <code>pyproject.toml</code>
-(<code>actone-data-mcp = "actone_data_mcp.server:main"</code>):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">actone-data-mcp</span>
+(<code>actwise-data-mcp = "actone_data_mcp.server:main"</code>; the legacy
+<code>actone-data-mcp</code> name is still installed as an alias):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">actwise-data-mcp</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c"># or, as an ASGI HTTP app (serves /mcp, health /healthz):</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">python</span> <span class="n">-m</span> <span class="n">uvicorn</span> <span class="n">actone_data_mcp</span><span class="p">.</span><span class="n">server</span><span class="p">:</span><span class="n">app</span> <span class="p">-</span><span class="n">-port</span> <span class="n">8766</span>
 </code></pre></div>
-<p>The HTTP transport is <strong>self-hosted</strong>; when <code>ACTONE_DATA_PROXY_API_KEY</code> is set it
+<p>The HTTP transport is <strong>self-hosted</strong>; when <code>ACTWISE_DATA_PROXY_API_KEY</code> is set it
 enforces an <code>X-API-Key</code> header (mandatory for any tunnelled deployment — how the
-ActWise Data agent reaches it).</p>
+ActWise Data agent reaches it). The legacy <code>ACTONE_DATA_PROXY_API_KEY</code> env var is
+still honored as a fallback.</p>
 <h2 id="self-host-setup">Self-host setup<a class="headerlink" href="#self-host-setup" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>Configure a database profile.</strong> Copy
-   <code>components/data/actone-data.example.yaml</code> to <code>~/.actwise/actone-data.yaml</code>
-   (resolution order: <code>$ACTWISE_CONFIG_DIR</code> → cwd → <code>~/.actwise</code> → repo root) and
+   <code>components/data/actone-data.example.yaml</code> to <code>~/.actwise/actwise-data.yaml</code>
+   (resolution order: <code>$ACTWISE_CONFIG_DIR</code> → cwd → <code>~/.actwise</code> → repo root; the
+   legacy <code>actone-data.yaml</code> name is still resolved as a fallback) and
    set each profile's <code>host</code>, <code>port</code>, <code>dbname</code>, <code>schema</code> (the client's <code>bppr_rcm</code>
    / <code>acm</code> schema), and <code>user</code>. Profile YAML holds <strong>no passwords</strong>.</li>
 <li><strong>Provide the password</strong> out-of-band: <code>ACTONE_DB_PASSWORD__&lt;PROFILE&gt;</code> (profile
-   name upper-cased, non-alphanumerics → <code>_</code>) or an <code>actone-data.secrets.yaml</code>
+   name upper-cased, non-alphanumerics → <code>_</code>) or an <code>actwise-data.secrets.yaml</code>
    beside the config.</li>
 <li><strong>Grant a read-only DB login.</strong> The engine only ever issues a single <code>READ ONLY</code>
    <code>SELECT</code> over <code>v_acm_*</code> views; a login with <code>SELECT</code> on those views is enough
    (and safest).</li>
 <li><strong>Point at the schema pack</strong> if your deployment differs — the bundled
    <code>v_acm_*</code> metadata grounds query generation; no fetch step is required.</li>
-<li><strong>Shared HTTP deploy:</strong> set <code>ACTONE_DATA_PROXY_API_KEY</code> and require the
+<li><strong>Shared HTTP deploy:</strong> set <code>ACTWISE_DATA_PROXY_API_KEY</code> and require the
    <code>X-API-Key</code> header on the tunnel. VPN-gated databases are only reachable when
    the host is on the corporate VPN.</li>
 </ol>
@@ -3087,7 +3126,7 @@ legacy <code>v_acm_alert*</code>.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   

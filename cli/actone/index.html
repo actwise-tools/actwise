@@ -2542,6 +2542,10 @@ grounds the <a href="../../agents/ops/">ActWise Ops</a> Copilot Studio agent.</p
 <td><code>ops soap</code></td>
 <td>Curated ActOne SOAP ops (admin surface the REST API lacks).</td>
 </tr>
+<tr>
+<td><code>ops designer</code></td>
+<td>Catalog-driven ActOne <strong>Designer</strong> ops — create/read/update/clone/remove/validate any of ~275 config object types.</td>
+</tr>
 </tbody>
 </table>
 <p><code>ops soap</code> is itself a sub-group:</p>
@@ -2564,6 +2568,51 @@ grounds the <a href="../../agents/ops/">ActWise Ops</a> Copilot Studio agent.</p
 <tr>
 <td><code>ops soap call</code></td>
 <td>Invoke a curated SOAP op. Reads always run; writes need <code>--allow-write</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><code>ops designer</code> is a catalog-driven sub-group (design-time config surface). <strong>Prefer
+REST</strong> when an equivalent exists; use these only for design-time objects REST can't
+reach:</p>
+<table>
+<thead>
+<tr>
+<th>Sub-command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ops designer search-types</code></td>
+<td>Find Designer object types by keyword (offline).</td>
+</tr>
+<tr>
+<td><code>ops designer describe-type</code></td>
+<td>Show a type's create path, field schema, relations, and a <strong>grounding</strong> hint pointing at the docs MCP.</td>
+</tr>
+<tr>
+<td><code>ops designer search-ops</code></td>
+<td>Find raw SOAP operations across the 22 Axis services (offline).</td>
+</tr>
+<tr>
+<td><code>ops designer list</code> / <code>get</code> / <code>constraints</code></td>
+<td>Read objects of a type / one object / delete constraints.</td>
+</tr>
+<tr>
+<td><code>ops designer create</code></td>
+<td>Create any creatable type from <code>--fields</code> JSON (WRITE, <code>--allow-write</code>).</td>
+</tr>
+<tr>
+<td><code>ops designer create-ddq</code></td>
+<td>Convenience: create a Drill Down Query (WRITE, <code>--allow-write</code>).</td>
+</tr>
+<tr>
+<td><code>ops designer clone</code></td>
+<td>Copy an object under a new identifier with <code>--overrides</code> (WRITE, <code>--allow-write</code>).</td>
+</tr>
+<tr>
+<td><code>ops designer remove</code></td>
+<td>Delete an object by type + identifier (WRITE, <code>--allow-write</code>).</td>
 </tr>
 </tbody>
 </table>
@@ -2717,7 +2766,7 @@ grounds the <a href="../../agents/ops/">ActWise Ops</a> Copilot Studio agent.</p
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   

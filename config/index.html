@@ -2367,8 +2367,8 @@ correctly whether it's an editable dev checkout or a global <code>uv tool</code>
 </tr>
 <tr>
 <td>Data (read-only SQL)</td>
-<td><code>actone-data.yaml</code></td>
-<td><code>actone-data.secrets.yaml</code></td>
+<td><code>actwise-data.yaml</code></td>
+<td><code>actwise-data.secrets.yaml</code></td>
 </tr>
 <tr>
 <td>Docs portal</td>
@@ -2383,8 +2383,9 @@ correctly whether it's an editable dev checkout or a global <code>uv tool</code>
 <ul>
 <li><strong>Ops</strong> — <code>actone-ops.yaml</code> lists one profile per ActOne instance (URL,
   <code>context_root</code>, user, <code>allow_writes</code>).</li>
-<li><strong>Data</strong> — <code>actone-data.yaml</code> lists one DB profile per environment (host, port,
-  name, read-only user, schema).</li>
+<li><strong>Data</strong> — <code>actwise-data.yaml</code> lists one DB profile per environment (host, port,
+  name, read-only user, schema). <em>(The legacy <code>actone-data.yaml</code> name is still
+  resolved as a fallback.)</em></li>
 <li><strong>Docenter</strong> — the catalog resolves to <code>~/.docenter/catalog.yaml</code>, fetched on
   first run using your own portal session (no NICE data is bundled).</li>
 </ul>
@@ -2426,7 +2427,7 @@ must stay uncommitted. See <a href="../security/">Security &amp; secrets</a>.</p
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   

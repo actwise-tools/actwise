@@ -2443,7 +2443,7 @@
 <p>Skills follow the open Agent Skills spec and install via the <code>skills</code> CLI:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">npx</span> <span class="n">skills</span> <span class="n">add</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">vinayguda</span><span class="p">/</span><span class="n">actwise</span><span class="p">.</span><span class="n">git</span> <span class="p">-</span><span class="n">-skill</span> <span class="n">actone-data</span> <span class="n">-a</span> <span class="n">claude-code</span> <span class="n">-g</span>
 </code></pre></div>
-Skills are instructions only — they drive the ActWise CLIs, so install the <code>actwise</code> distribution too. This skill requires the <strong><code>actone-data</code></strong> console script and the <strong><code>actone-data-mcp</code></strong> server. Configure the DB via <code>--profile</code>, a libpq <code>--dsn</code>/<code>ACTONE_DATA_DSN</code>, or <code>ACTONE_DB_*</code> env vars.</p>
+Skills are instructions only — they drive the ActWise CLIs, so install the <code>actwise</code> distribution too. This skill requires the <strong><code>actwise-data</code></strong> console script and the <strong><code>actwise-data-mcp</code></strong> server (legacy <code>actone-data</code> / <code>actone-data-mcp</code> names still work). Configure the DB via <code>--profile</code>, a libpq <code>--dsn</code>/<code>ACTWISE_DATA_DSN</code>, or <code>ACTONE_DB_*</code> env vars.</p>
 <h2 id="walkthrough">Walkthrough<a class="headerlink" href="#walkthrough" title="Permanent link">&para;</a></h2>
 <ul>
 <li><em>"How many work items are open, by queue?"</em> → orients, describes <code>v_acm_items</code>, validates, then runs a single <code>SELECT</code>.</li>
@@ -2498,7 +2498,7 @@ Skills are instructions only — they drive the ActWise CLIs, so install the <co
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   

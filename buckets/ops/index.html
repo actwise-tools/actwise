@@ -2391,7 +2391,7 @@ tooling and the hard-won ActOne quirks catalog.</p>
 </tr>
 <tr>
 <td><code>actone_mcp</code></td>
-<td>The <code>actone-mcp</code> MCP server (FastMCP) — surfaces the runtime discovery loop and SOAP ops as tools.</td>
+<td>The <code>actone-mcp</code> MCP server (FastMCP) — surfaces the runtime discovery loop, curated SOAP admin ops, and the catalog-driven Designer engine as tools.</td>
 </tr>
 <tr>
 <td><code>postman</code></td>
@@ -2404,7 +2404,8 @@ tooling and the hard-won ActOne quirks catalog.</p>
 <li><strong>CLI:</strong> <a href="../../cli/actone/"><code>actone</code></a> — <code>fetch-spec</code>, <code>generate</code>, <code>provision</code>,
   <code>sanitize</code>, <code>review</code>, and the <code>actone ops</code> runtime loop.</li>
 <li><strong>MCP:</strong> <a href="../../mcp/actone-mcp/"><code>actone-mcp</code></a> — discover / describe / invoke
-  live REST and curated SOAP operations, with writes gated.</li>
+  live REST and curated SOAP operations, plus a catalog-driven Designer engine,
+  with writes gated.</li>
 <li><strong>Skills:</strong> <a href="../../skills/actone-ops/"><code>actone-ops</code></a> drives the <code>actone ops</code>
   loop against a live ActOne; the separate <code>actone-api-suite</code> skill covers
   building/pushing Postman collections.</li>
@@ -2424,6 +2425,13 @@ tooling and the hard-won ActOne quirks catalog.</p>
 <li><strong>Curated SOAP where REST can't.</strong> A curated SOAP layer covers the legacy Axis
   admin surface the REST API lacks — most importantly creating a Business Unit,
   the prerequisite for seeding work items on a fresh instance.</li>
+<li><strong>Designer, design-time.</strong> A catalog-driven Designer engine (from a vendored
+  <code>actone-catalog.json</code>) can create / clone / read / update / remove / validate any
+  of ~275 Designer object types (alert &amp; case types, workflows, views, Drill Down
+  Queries) generically. <strong>REST-first:</strong> prefer a REST op when one exists; use
+  Designer only for design-time objects REST doesn't cover. <code>designer_describe_type</code>
+  returns a <strong>grounding</strong> block that points the agent at the docs MCP for the setup
+  sequence and prerequisites the catalog can't express.</li>
 <li><strong>Quirks catalog.</strong> <code>postman/</code> records hard-won ActOne quirks (multipart
   save-step, Tomcat rejecting raw JSON query chars, etc.).</li>
 </ul>
@@ -2468,7 +2476,7 @@ tooling and the hard-won ActOne quirks catalog.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   

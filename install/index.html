@@ -2491,8 +2491,9 @@ MCP servers, and skills.</p>
 </code></pre></div>
 <p>This puts every ActWise console script on your PATH:
 <code>docenter</code> · <code>docenter-mcp</code> · <code>actimize-docs-mcp</code> · <code>actone</code> · <code>actone-mcp</code> ·
-<code>actone-utils</code> · <code>actone-utils-mcp</code> · <code>actone-data</code> · <code>actone-data-mcp</code> · <code>ndc</code> ·
-<code>actimize-installer</code> · <code>actone-local</code>.</p>
+<code>actone-utils</code> · <code>actone-utils-mcp</code> · <code>actwise-data</code> · <code>actwise-data-mcp</code> · <code>ndc</code> ·
+<code>actimize-installer</code> · <code>actone-local</code>. <em>(The data component is also installed under
+its legacy <code>actone-data</code> / <code>actone-data-mcp</code> names.)</em></p>
 <h3 id="sanity-check">Sanity check<a class="headerlink" href="#sanity-check" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">docenter</span> <span class="p">-</span><span class="n">-help</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">actone</span> <span class="p">-</span><span class="n">-help</span>
@@ -2511,15 +2512,16 @@ root (see <a href="../config/">Configuration</a>). The recommended home for an i
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">copy </span><span class="n">components</span><span class="p">\</span><span class="n">ops</span><span class="p">\</span><span class="n">actone-ops</span><span class="p">.</span><span class="n">secrets</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">yaml</span> <span class="nv">$HOME</span><span class="p">\.</span><span class="n">actwise</span><span class="p">\</span><span class="n">actone-ops</span><span class="p">.</span><span class="n">secrets</span><span class="p">.</span><span class="n">yaml</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c"># Data (read-only SQL): DB profile catalog + secrets</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="nb">copy </span><span class="n">components</span><span class="p">\</span><span class="n">data</span><span class="p">\</span><span class="n">actone-data</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">yaml</span>         <span class="nv">$HOME</span><span class="p">\.</span><span class="n">actwise</span><span class="p">\</span><span class="n">actone-data</span><span class="p">.</span><span class="n">yaml</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="nb">copy </span><span class="n">components</span><span class="p">\</span><span class="n">data</span><span class="p">\</span><span class="n">actone-data</span><span class="p">.</span><span class="n">secrets</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">yaml</span> <span class="nv">$HOME</span><span class="p">\.</span><span class="n">actwise</span><span class="p">\</span><span class="n">actone-data</span><span class="p">.</span><span class="n">secrets</span><span class="p">.</span><span class="n">yaml</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="nb">copy </span><span class="n">components</span><span class="p">\</span><span class="n">data</span><span class="p">\</span><span class="n">actone-data</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">yaml</span>         <span class="nv">$HOME</span><span class="p">\.</span><span class="n">actwise</span><span class="p">\</span><span class="n">actwise-data</span><span class="p">.</span><span class="n">yaml</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="nb">copy </span><span class="n">components</span><span class="p">\</span><span class="n">data</span><span class="p">\</span><span class="n">actone-data</span><span class="p">.</span><span class="n">secrets</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">yaml</span> <span class="nv">$HOME</span><span class="p">\.</span><span class="n">actwise</span><span class="p">\</span><span class="n">actwise-data</span><span class="p">.</span><span class="n">secrets</span><span class="p">.</span><span class="n">yaml</span>
 </code></pre></div>
 <p>Then edit the copied files:</p>
 <ul>
 <li><strong><code>actone-ops.yaml</code></strong> — a profile per ActOne instance (URL, <code>context_root</code>, user,
   <code>allow_writes</code>). Passwords go in <code>actone-ops.secrets.yaml</code>, never in the profile.</li>
-<li><strong><code>actone-data.yaml</code></strong> — a DB profile per environment (host, port, name, read-only
-  user, schema). Passwords go in <code>actone-data.secrets.yaml</code>.</li>
+<li><strong><code>actwise-data.yaml</code></strong> — a DB profile per environment (host, port, name, read-only
+  user, schema). Passwords go in <code>actwise-data.secrets.yaml</code>. <em>(The legacy
+  <code>actone-data.yaml</code> / <code>actone-data.secrets.yaml</code> names are still resolved as a fallback.)</em></li>
 </ul>
 <h3 id="env-var-alternatives">Env-var alternatives<a class="headerlink" href="#env-var-alternatives" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2542,7 +2544,7 @@ project <code>.mcp.json</code> (drop into the workspace root):</p>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;actimize-docs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;actimize-docs-mcp&quot;</span><span class="w"> </span><span class="p">},</span>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&quot;actone-ops&quot;</span><span class="p">:</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;actone-mcp&quot;</span><span class="w"> </span><span class="p">},</span>
 <a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="nt">&quot;actone-utils&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;actone-utils-mcp&quot;</span><span class="w"> </span><span class="p">},</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="nt">&quot;actone-data&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;actone-data-mcp&quot;</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="nt">&quot;actone-data&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;actwise-data-mcp&quot;</span><span class="w"> </span><span class="p">}</span>
 <a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="p">}</span>
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="p">}</span>
 </code></pre></div>
@@ -2606,7 +2608,7 @@ keep the CLI on your PATH. See the <a href="../skills/">Skills overview</a>.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   

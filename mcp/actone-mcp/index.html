@@ -2627,16 +2627,19 @@
 
 <h1 id="actone-mcp">actone-mcp<a class="headerlink" href="#actone-mcp" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>Turns a live ActOne instance into a discoverable REST (and curated SOAP)
-surface — a <code>search → describe → invoke</code> loop with writes gated by default.</p>
+<p>Turns a live ActOne instance into a discoverable REST <strong>and</strong> design-time
+Designer (SOAP) surface — a <code>search → describe → invoke</code> loop with writes gated
+by default.</p>
 </blockquote>
 <h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
 <p>Let an agent operate a running ActOne instance safely: discover operations by
 keyword over the Extend REST API OpenAPI spec, inspect their parameters and
 read/write access, then invoke them live. Read (GET) operations run freely; any
-write is refused unless the operator opted in server-side. It also exposes a
-curated set of legacy <strong>SOAP</strong> admin operations (e.g. create Business Unit) the
-REST API lacks.</p>
+write is refused unless the operator opted in server-side. It also exposes the
+legacy <strong>SOAP</strong> surface the REST API lacks — a curated admin slice (e.g. create
+Business Unit) plus a catalog-driven <strong>Designer</strong> engine that can create, clone,
+read, update, remove, and validate any of ActOne Designer's ~275 configuration
+object types (alert/case types, workflows, views, and Drill Down Queries).</p>
 <h2 id="how-it-fits">How it fits<a class="headerlink" href="#how-it-fits" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Bucket:</strong> <a href="../../buckets/ops/">ops</a>.</li>
@@ -2649,8 +2652,8 @@ REST API lacks.</p>
   stdio.</li>
 </ul>
 <h2 id="tools-exposed">Tools exposed<a class="headerlink" href="#tools-exposed" title="Permanent link">&para;</a></h2>
-<p>Enumerated from <code>components/ops/actone_mcp/server.py</code> — eight <code>@mcp.tool</code>
-registrations (FastMCP):</p>
+<p>Enumerated from <code>components/ops/actone_mcp/server.py</code> — <strong>21</strong> <code>@mcp.tool</code>
+registrations (FastMCP). The <strong>runtime REST + curated SOAP</strong> tools:</p>
 <table>
 <thead>
 <tr>
@@ -2693,6 +2696,74 @@ registrations (FastMCP):</p>
 </tr>
 </tbody>
 </table>
+<p>The <strong>design-time Designer (SOAP)</strong> tools — a generic, catalog-driven engine over
+ActOne Designer's object types (one engine, not a static tool per type):</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>designer_search_types</code></td>
+<td>Discover Designer object types by keyword; <code>creatable_only</code> to filter to creatable ones.</td>
+</tr>
+<tr>
+<td><code>designer_describe_type</code></td>
+<td>Show a type's create path + payload-bean field schema, <code>references</code>/<code>composes</code> relations, and a <strong><code>grounding</code></strong> block pointing at the docs MCP.</td>
+</tr>
+<tr>
+<td><code>designer_search_operations</code></td>
+<td>Search the raw SOAP operations across the 22 Axis services (offline).</td>
+</tr>
+<tr>
+<td><code>designer_list_objects</code> / <code>designer_get_object</code></td>
+<td>List existing objects of a type / fetch one by identifier (READ).</td>
+</tr>
+<tr>
+<td><code>designer_get_remove_constraints</code></td>
+<td>List delete constraints for an object (READ).</td>
+</tr>
+<tr>
+<td><code>designer_create_object</code></td>
+<td>Create any creatable type from a field dict (WRITE, gated).</td>
+</tr>
+<tr>
+<td><code>create_drill_down_query</code></td>
+<td>Typed convenience wrapper to create a <strong>Drill Down Query</strong> (WRITE, gated).</td>
+</tr>
+<tr>
+<td><code>designer_clone_object</code></td>
+<td>Copy an object under a new identifier with field overrides (WRITE, gated).</td>
+</tr>
+<tr>
+<td><code>designer_update_object</code> / <code>designer_remove_object</code></td>
+<td>Save a modified payload / delete an object (WRITE, gated).</td>
+</tr>
+<tr>
+<td><code>designer_validate_object</code></td>
+<td>Server-side validate a payload without saving (READ).</td>
+</tr>
+<tr>
+<td><code>designer_call_operation</code></td>
+<td>Escape hatch: invoke any of the 335 catalog operations (write-gated — unclassified).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>REST-first convention.</strong> The Designer/SOAP tools cover the <strong>design-time</strong>
+config surface the Extend REST API does not. When a REST equivalent exists
+(<code>search_ops</code>/<code>describe_op</code>/<code>invoke_op</code>), <strong>prefer REST</strong>; use <code>designer_*</code> only
+for design-time objects with no REST operation.</p>
+<p><strong>Grounding convention.</strong> The catalog gives a type's field <em>shape</em>, not the
+product <em>procedure</em>. <code>designer_describe_type</code> returns a <code>grounding</code> block; before
+authoring, follow its <code>suggestedQueries</code> into the ActWise docs MCP (docenter
+<code>search_docs</code>/<code>get_page</code>) to learn the setup <strong>sequence</strong>, prerequisites, and
+server-enforced mandatory fields the catalog can't express (e.g. a DrillDownQuery
+needs an existing JDBC connection), then create any <code>references</code> objects first.</p>
+</blockquote>
 <h2 id="request-flow-tool-call-to-a-live-actone-instance">Request flow — tool call to a live ActOne instance<a class="headerlink" href="#request-flow-tool-call-to-a-live-actone-instance" title="Permanent link">&para;</a></h2>
 <p>Every tool call travels the <strong>same lifecycle</strong>: an MCP client <code>POST</code>s JSON-RPC to
 <code>/mcp</code> (Copilot Studio) or attaches over stdio (local IDE agents), the <code>_AuthGate</code>
@@ -2903,7 +2974,7 @@ confirm-before-write.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   

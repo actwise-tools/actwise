@@ -2398,11 +2398,13 @@ appended to a JSONL audit log with the originating question. It prefers permissi
 <h2 id="cli-mcp-skills-agent">CLI / MCP / Skills / Agent<a class="headerlink" href="#cli-mcp-skills-agent" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>CLI:</strong> <a href="../../cli/actone-data/"><code>actone-data</code></a> — <code>ping</code>, <code>version</code>, <code>schema</code>,
-  <code>query validate</code> / <code>query run</code>, <code>perf</code>, <code>audit</code>, <code>env</code>, <code>docs</code>, <code>eval</code>.</li>
-<li><strong>MCP:</strong> <a href="../../mcp/actone-data-mcp/"><code>actone-data-mcp</code></a> — <strong>17 read-only tools</strong>
-  across two surfaces: NL-to-SQL grounding + execution (schema summary, rules,
-  list/describe, validate, run — all solution-aware) and performance diagnostics
-  (health, indexes, vacuum, config, scored report, explain).</li>
+  <code>solutions</code>, <code>query validate</code> / <code>query run</code>, <code>rules</code>, <code>perf</code>, <code>audit</code>, <code>env</code>,
+  <code>docs</code>, <code>eval</code>.</li>
+<li><strong>MCP:</strong> <a href="../../mcp/actone-data-mcp/"><code>actone-data-mcp</code></a> — <strong>20 read-only tools</strong>
+  across two surfaces: NL-to-SQL grounding + execution (list solutions, schema
+  summary, rules, list/describe, validate, run, list/detect business solutions —
+  all solution-aware) and performance diagnostics (health, indexes, vacuum,
+  config, scored report, explain).</li>
 <li><strong>Skill:</strong> <a href="../../skills/actone-data/"><code>actone-data</code></a> — the behavior spec for the
   <code>get_schema_summary → get_rules → list/describe → validate → run</code> loop.</li>
 <li><strong>Agent:</strong> <a href="../../agents/data/">ActWise Data</a> — grounded on
@@ -2420,7 +2422,13 @@ appended to a JSONL audit log with the originating question. It prefers permissi
   prefix.</li>
 <li><strong>Rule packs + PII masking.</strong> Per-solution rule packs carry query conventions
   and a <code>masked_columns</code> list; direct-identifier (PII) columns are redacted to
-  <code>***REDACTED***</code> at result time and reported in <code>run_query</code>.</li>
+  <code>***REDACTED***</code> at result time and reported in <code>run_query</code>. The rules are
+  <strong>doc-mined from the Actimize Implementer/Installation guides</strong> — a base ActOne
+  pack (inherited by every solution) encodes universal best practices (prefer
+  documented views over base tables, prefer the <code>2</code>-suffixed join-id views over
+  deprecated identifier views, <code>*_join_id</code> is join-only, filter <code>fl_deleted=0</code> /
+  <code>fl_archive=0</code>, avoid <code>SELECT *</code>), and each solution layers its own view
+  families, status flags, and masked columns on top.</li>
 <li><strong>7-step guardrail.</strong> <code>sqlglot</code> enforces a single read-only <code>SELECT</code>/<code>UNION</code>
   over the allowlist and injects/clamps a LIMIT; the guardrail always
   re-runs inside <code>run_query</code>, so it can't be bypassed.</li>
@@ -2475,7 +2483,7 @@ appended to a JSONL audit log with the originating question. It prefers permissi
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.11">v0.3.11</a> · <a href="https://github.com/actwise-tools/actwise/commit/5200631">5200631</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
     </div>
   
   
