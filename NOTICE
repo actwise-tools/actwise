@@ -1,0 +1,44 @@
+ActWise
+Copyright 2026 The ActWise contributors
+
+This product is licensed under the Apache License, Version 2.0 (the "License");
+you may not use this product except in compliance with the License. You may obtain
+a copy of the License in the accompanying LICENSE file or at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+------------------------------------------------------------------------------
+Trademarks & affiliation
+------------------------------------------------------------------------------
+
+ActWise is an unofficial, community-maintained toolkit. It is NOT a product of,
+and is NOT affiliated with, endorsed by, sponsored by, or supported by NICE Ltd.
+or any of its affiliates.
+
+"NICE", "Actimize", "NICE Actimize", and "ActOne" are trademarks or registered
+trademarks of NICE Ltd. and/or its affiliates. Any other product and company
+names may be trademarks of their respective owners. All trademarks are used in
+this project solely in a nominative, descriptive sense to identify the systems
+with which ActWise interoperates. No endorsement or affiliation is implied.
+
+------------------------------------------------------------------------------
+Data & content
+------------------------------------------------------------------------------
+
+ActWise ships NO NICE Actimize content: no documentation, catalogs, database
+schemas, API specifications, product keys, or license files are bundled with this
+distribution. Any such data is retrieved at runtime, on demand, using the
+end user's own authenticated session against systems the end user is already
+entitled to access, and remains the property of its respective owner. ActWise
+does not redistribute that content.
+
+------------------------------------------------------------------------------
+Warranty disclaimer
+------------------------------------------------------------------------------
+
+This software is provided on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+OF ANY KIND, either express or implied, including, without limitation, any
+warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS
+FOR A PARTICULAR PURPOSE. You are solely responsible for determining the
+appropriateness of using this software and assume any risks associated with your
+exercise of permissions under the Apache License, Version 2.0.

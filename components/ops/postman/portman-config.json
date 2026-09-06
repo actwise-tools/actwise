@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "tests": {
+    "contractTests": [
+      {
+        "openApiOperation": "*::/*",
+        "statusSuccess": { "enabled": true },
+        "responseTime": { "enabled": true, "maxMs": 5000 },
+        "contentType": { "enabled": true },
+        "jsonBody": { "enabled": true },
+        "schemaValidation": { "enabled": true },
+        "headersPresent": { "enabled": true }
+      }
+    ]
+  },
+  "assignVariables": [
+    {
+      "openApiOperationId": "login",
+      "collectionVariables": [
+        { "responseHeaderProp": "CSRFTOKEN", "name": "CSRFTOKEN" }
+      ]
+    }
+  ],
+  "overwrites": [
+    {
+      "openApiOperationId": "login",
+      "overwriteRequestBody": [
+        { "key": "username", "value": "{{username}}", "overwrite": true },
+        { "key": "password", "value": "{{password}}", "overwrite": true }
+      ]
+    }
+  ],
+  "globals": {
+    "stripResponseExamples": true,
+    "portmanReplacements": []
+  }
+}
