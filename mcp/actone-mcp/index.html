@@ -2652,7 +2652,7 @@ object types (alert/case types, workflows, views, and Drill Down Queries).</p>
   stdio.</li>
 </ul>
 <h2 id="tools-exposed">Tools exposed<a class="headerlink" href="#tools-exposed" title="Permanent link">&para;</a></h2>
-<p>Enumerated from <code>components/ops/actone_mcp/server.py</code> — <strong>21</strong> <code>@mcp.tool</code>
+<p>Enumerated from <code>components/ops/actone_mcp/server.py</code> — <strong>23</strong> <code>@mcp.tool</code>
 registrations (FastMCP). The <strong>runtime REST + curated SOAP</strong> tools:</p>
 <table>
 <thead>
@@ -2733,6 +2733,14 @@ ActOne Designer's object types (one engine, not a static tool per type):</p>
 <tr>
 <td><code>create_drill_down_query</code></td>
 <td>Typed convenience wrapper to create a <strong>Drill Down Query</strong> (WRITE, gated).</td>
+</tr>
+<tr>
+<td><code>create_alert_type</code></td>
+<td>Typed convenience wrapper to create an <strong>alert type</strong> (WRITE, gated).</td>
+</tr>
+<tr>
+<td><code>create_case_type</code></td>
+<td>Typed <strong>case type</strong> create (WRITE, gated) — <strong>legacy</strong> (modern config uses case items / work-item types).</td>
 </tr>
 <tr>
 <td><code>designer_clone_object</code></td>
@@ -2974,7 +2982,7 @@ confirm-before-write.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.15">v0.3.15</a> · <a href="https://github.com/actwise-tools/actwise/commit/af2c251">af2c251</a>
     </div>
   
   

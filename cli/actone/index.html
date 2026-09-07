@@ -2490,7 +2490,7 @@ grounds the <a href="../../agents/ops/">ActWise Ops</a> Copilot Studio agent.</p
 </tr>
 <tr>
 <td><code>ops</code></td>
-<td>Spec-driven runtime ops over the ActOne Extend REST API (discovery: <code>search</code>/<code>describe</code>/<code>call</code>). Read-only in P1.</td>
+<td>Spec-driven runtime ops over the ActOne Extend REST API (discovery: <code>search</code>/<code>describe</code>/<code>call</code>). Reads open; writes gated (opt-in).</td>
 </tr>
 </tbody>
 </table>
@@ -2533,6 +2533,10 @@ grounds the <a href="../../agents/ops/">ActWise Ops</a> Copilot Studio agent.</p
 <tr>
 <td><code>ops version</code></td>
 <td>Login and report the detected ActOne version.</td>
+</tr>
+<tr>
+<td><code>ops smoke</code></td>
+<td>Pre-ship health check — drives the <em>actual MCP tool functions</em> across three layers (reads+auto-fixtures, opt-in write lifecycles, offline write-gating sweep).</td>
 </tr>
 <tr>
 <td><code>ops sync-skill</code></td>
@@ -2607,12 +2611,32 @@ reach:</p>
 <td>Convenience: create a Drill Down Query (WRITE, <code>--allow-write</code>).</td>
 </tr>
 <tr>
+<td><code>ops designer create-alert-type</code></td>
+<td>Convenience: create an alert type (WRITE, <code>--allow-write</code>).</td>
+</tr>
+<tr>
+<td><code>ops designer create-case-type</code></td>
+<td>Convenience: create a case type (WRITE, <code>--allow-write</code>) — <strong>legacy</strong>.</td>
+</tr>
+<tr>
 <td><code>ops designer clone</code></td>
 <td>Copy an object under a new identifier with <code>--overrides</code> (WRITE, <code>--allow-write</code>).</td>
 </tr>
 <tr>
+<td><code>ops designer update</code></td>
+<td>Save a modified object payload XML (WRITE, <code>--allow-write</code>).</td>
+</tr>
+<tr>
+<td><code>ops designer validate</code></td>
+<td>Server-side validate a payload without saving (READ).</td>
+</tr>
+<tr>
 <td><code>ops designer remove</code></td>
 <td>Delete an object by type + identifier (WRITE, <code>--allow-write</code>).</td>
+</tr>
+<tr>
+<td><code>ops designer call</code></td>
+<td>Escape hatch: invoke any catalog SOAP op (reads free; writes <code>--allow-write</code>).</td>
 </tr>
 </tbody>
 </table>
@@ -2766,7 +2790,7 @@ reach:</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.14">v0.3.14</a> · <a href="https://github.com/actwise-tools/actwise/commit/aaf2c21">aaf2c21</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.15">v0.3.15</a> · <a href="https://github.com/actwise-tools/actwise/commit/af2c251">af2c251</a>
     </div>
   
   
