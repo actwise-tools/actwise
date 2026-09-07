@@ -2668,7 +2668,7 @@ registrations (FastMCP). The <strong>runtime REST + curated SOAP</strong> tools:
 </tr>
 <tr>
 <td><code>list_ops</code></td>
-<td>Enumerate the <strong>entire</strong> operation surface (uncapped); filter by <code>tag</code> / <code>reads_only</code>, or <code>group</code> by tag.</td>
+<td>Enumerate the operation surface, <strong>paged</strong> (default 50/page); filter by <code>tag</code> / <code>reads_only</code>, page with <code>offset</code>/<code>limit</code>, or <code>group</code> all by tag.</td>
 </tr>
 <tr>
 <td><code>describe_op</code></td>
@@ -2828,13 +2828,15 @@ offline registry — the <strong>start</strong> of the loop. An empty query list
     RO --&gt; O
     ALL --&gt; O["result: specVersion, count,&lt;br/&gt;results (operationId·method·path·summary·tags·access)"]</code></pre>
 <h3 id="list_ops"><code>list_ops</code><a class="headerlink" href="#list_ops" title="Permanent link">&para;</a></h3>
-<p>Enumerate the <strong>entire</strong> operation surface (no cap) — unlike <code>search_ops</code>. Filter
-by <code>tag</code> and/or <code>reads_only</code>, or set <code>group=True</code> to organize by tag.</p>
+<p>Enumerate the operation surface, <strong>paged</strong> (default 50/page) — unlike <code>search_ops</code>.
+Filter by <code>tag</code> and/or <code>reads_only</code>, walk pages with <code>offset</code>/<code>limit</code>, or set
+<code>group=True</code> to organize all ops by tag. Pagination keeps a single streamed
+response small enough for remote/gateway MCP transports (Copilot Studio).</p>
 <pre class="mermaid"><code>flowchart TD
-    A["list_ops(reads_only?, tag?, group?)"] --&gt; REG["_reg() (offline)"]
+    A["list_ops(reads_only?, tag?, group?, offset?, limit?)"] --&gt; REG["_reg() (offline)"]
     REG --&gt; G{group?}
     G --&gt;|yes| GR["reg.grouped(reads_only)&lt;br/&gt;→ groups {tag: [ops]}"]
-    G --&gt;|no| FL["reg.list_ops(reads_only, tag)&lt;br/&gt;→ flat operations[]"]
+    G --&gt;|no| FL["reg.list_ops(reads_only, tag)[offset:offset+limit]&lt;br/&gt;→ page + next_offset"]
     GR --&gt; O["result: specVersion, count, …"]
     FL --&gt; O</code></pre>
 <h3 id="describe_op"><code>describe_op</code><a class="headerlink" href="#describe_op" title="Permanent link">&para;</a></h3>
@@ -2982,7 +2984,7 @@ confirm-before-write.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.15">v0.3.15</a> · <a href="https://github.com/actwise-tools/actwise/commit/af2c251">af2c251</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.16">v0.3.16</a> · <a href="https://github.com/actwise-tools/actwise/commit/216803a">216803a</a>
     </div>
   
   
