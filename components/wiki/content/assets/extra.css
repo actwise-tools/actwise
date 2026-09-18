@@ -1,0 +1,73 @@
+/* ActWise wiki — visual polish layered on top of Material for MkDocs. */
+
+:root {
+  --actwise-accent: #7c8cff;
+  --actwise-panel: #0d1117;
+}
+
+/* --- Home hero banner ---------------------------------------------------- */
+.actwise-hero {
+  margin: 0 0 1.6rem;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(13, 17, 23, 0.28);
+  line-height: 0;
+}
+.actwise-hero img,
+.actwise-hero svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Mermaid diagrams: frame them as figures ----------------------------- */
+.md-typeset .mermaid {
+  display: flex;
+  justify-content: center;
+  padding: 1.1rem 1rem;
+  margin: 1.2rem 0;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 1px 1px,
+      var(--md-default-fg-color--lightest) 1px, transparent 0) 0 0 / 22px 22px,
+    var(--md-default-bg-color);
+}
+.md-typeset .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- Grid cards: subtle lift + accent edge ------------------------------- */
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid.cards > :is(ul, ol) > li {
+  border-radius: 12px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  transition: transform 140ms ease, box-shadow 140ms ease,
+    border-color 140ms ease;
+}
+.md-typeset .grid.cards > ul > li:hover,
+.md-typeset .grid.cards > :is(ul, ol) > li:hover {
+  transform: translateY(-3px);
+  border-color: var(--actwise-accent);
+  box-shadow: 0 10px 26px rgba(124, 140, 255, 0.18);
+}
+
+/* --- Figure captions for hand-authored SVG/PNG diagrams ------------------ */
+.md-typeset figure.actwise-figure {
+  margin: 1.4rem 0;
+}
+.md-typeset figure.actwise-figure img {
+  border-radius: 12px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+.md-typeset figure.actwise-figure figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--md-default-fg-color--light);
+}
+
+/* --- Tables: a touch more breathing room --------------------------------- */
+.md-typeset table:not([class]) th {
+  background: var(--md-default-fg-color--lightest);
+}

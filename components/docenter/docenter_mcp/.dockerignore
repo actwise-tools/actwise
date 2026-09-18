@@ -1,0 +1,8 @@
+# Keep secrets and bulk corpus out of the build context.
+browser-profile/
+.env
+raw_docs/actone/
+raw_docs/**/*.md
+**/__pycache__/
+*.pyc
+.git/

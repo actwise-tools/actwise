@@ -1,0 +1,11 @@
+# ActWise ActOne-Ops MCP — runtime deps (Streamable HTTP transport).
+# The actone package itself is stdlib + PyYAML only; the server adds the
+# FastMCP + uvicorn/starlette stack (mirrors docenter_mcp for easy porting).
+mcp>=1.2,<2
+uvicorn>=0.27
+starlette>=0.37
+PyYAML>=6.0
+# SOAP + Designer tools parse XML through defusedxml (XXE-safe). Without it the
+# container starts fine (imports are lazy) but every SOAP/Designer call fails at
+# runtime with "No module named 'defusedxml'". Keep in sync with pyproject.
+defusedxml>=0.7

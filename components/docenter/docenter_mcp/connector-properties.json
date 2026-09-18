@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "connectionParameters": {
+      "api_key": {
+        "type": "securestring",
+        "uiDefinition": {
+          "displayName": "X-API-Key",
+          "description": "The X-API-Key value for the ActWise docenter MCP server.",
+          "tooltip": "Provide the docenter MCP API key (DOCENTER_PROXY_API_KEY).",
+          "constraints": {
+            "tabIndex": 2,
+            "clearText": false,
+            "required": "true"
+          }
+        }
+      }
+    },
+    "iconBrandColor": "#007ee5",
+    "scriptOperations": [],
+    "capabilities": [],
+    "policyTemplateInstances": [],
+    "publisher": "ActWise",
+    "stackOwner": "ActWise"
+  }
+}

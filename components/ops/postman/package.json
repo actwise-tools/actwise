@@ -1,0 +1,24 @@
+{
+  "name": "actone-postman-suite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenAPI-driven Postman testing suite for ActOne Extend REST APIs (portman generation + newman/Postman CLI execution).",
+  "scripts": {
+    "spec:sanitize": "python -m actone.sanitize_spec",
+    "gen:contract": "python -m actone.sanitize_spec && portman --cliOptionsFile portman-cli-options.json",
+    "gen:full": "python -m actone.generate_collection",
+    "spec:fetch": "python -m actone.fetch_spec",
+    "provision": "python -m actone.provision_from_url",
+    "review": "python -m actone.review_config",
+    "test:local": "newman run ActOne.postman_collection.json -e ActOne.local.postman_environment.json",
+    "test:contract": "newman run generated/ActOne.contract.postman_collection.json -e ActOne.local.postman_environment.json",
+    "login:cli": "postman login --with-api-key %POSTMAN_API_KEY%",
+    "test:cloud": "postman collection run %POSTMAN_COLLECTION_UID% -e %POSTMAN_ENVIRONMENT_UID%",
+    "push": "pwsh -File ./push-to-postman.ps1"
+  },
+  "devDependencies": {
+    "@apideck/portman": "^1.32.0",
+    "newman": "^6.2.1",
+    "swagger2openapi": "^7.0.8"
+  }
+}
