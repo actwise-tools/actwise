@@ -1459,6 +1459,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#designer-deep-capability-lifecycle-plan-apply-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Designer deep-capability lifecycle (plan / apply / verify)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2559,6 +2570,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#designer-deep-capability-lifecycle-plan-apply-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Designer deep-capability lifecycle (plan / apply / verify)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2652,7 +2674,7 @@ object types (alert/case types, workflows, views, and Drill Down Queries).</p>
   stdio.</li>
 </ul>
 <h2 id="tools-exposed">Tools exposed<a class="headerlink" href="#tools-exposed" title="Permanent link">&para;</a></h2>
-<p>Enumerated from <code>components/ops/actone_mcp/server.py</code> — <strong>23</strong> <code>@mcp.tool</code>
+<p>Enumerated from <code>components/ops/actone_mcp/server.py</code> — <strong>32</strong> <code>@mcp.tool</code>
 registrations (FastMCP). The <strong>runtime REST + curated SOAP</strong> tools:</p>
 <table>
 <thead>
@@ -2719,6 +2741,22 @@ ActOne Designer's object types (one engine, not a static tool per type):</p>
 <td>Search the raw SOAP operations across the 22 Axis services (offline).</td>
 </tr>
 <tr>
+<td><code>designer_search_capabilities</code> / <code>designer_inspect</code></td>
+<td>Discover deep recipes, maturity, and target-build evidence.</td>
+</tr>
+<tr>
+<td><code>designer_export_state</code> / <code>designer_compare_state</code></td>
+<td>Export normalized <code>create_work_item_type</code> state from a verified build or compare it with a desired specification (READ).</td>
+</tr>
+<tr>
+<td><code>designer_diff_exports</code> / <code>designer_compare_environments</code></td>
+<td>Diff intact exported JSON documents without login, or independently collect and compare two verified environments (READ).</td>
+</tr>
+<tr>
+<td><code>designer_plan</code> / <code>designer_apply</code> / <code>designer_verify</code></td>
+<td>Shared deep capability lifecycle for Platform Lists, work-item families, DDQs, modern work-item presentation, and business-unit hierarchies; apply is blocked until a build is live-certified.</td>
+</tr>
+<tr>
 <td><code>designer_list_objects</code> / <code>designer_get_object</code></td>
 <td>List existing objects of a type / fetch one by identifier (READ).</td>
 </tr>
@@ -2736,7 +2774,7 @@ ActOne Designer's object types (one engine, not a static tool per type):</p>
 </tr>
 <tr>
 <td><code>create_alert_type</code></td>
-<td>Typed convenience wrapper to create an <strong>alert type</strong> (WRITE, gated).</td>
+<td><strong>Deprecated compatibility adapter</strong> requiring a complete <code>create_work_item_type</code> specification; delegates to its guarded plan/apply/verify path (WRITE, gated).</td>
 </tr>
 <tr>
 <td><code>create_case_type</code></td>
@@ -2771,6 +2809,26 @@ authoring, follow its <code>suggestedQueries</code> into the ActWise docs MCP (d
 <code>search_docs</code>/<code>get_page</code>) to learn the setup <strong>sequence</strong>, prerequisites, and
 server-enforced mandatory fields the catalog can't express (e.g. a DrillDownQuery
 needs an existing JDBC connection), then create any <code>references</code> objects first.</p>
+<p><code>create_work_item_type</code> and <code>remove_work_item_type</code> are live-certified on 10.2.0.19
+(removal deletes alert-design objects via dedicated <code>alertDesignService</code> remove ops
+and the workflow definition via generic <code>removeObject</code>, in reverse dependency order,
+fail-closed). <code>manage_drill_down_query</code> and <code>manage_business_unit_hierarchy</code> are
+certified on
+10.2.0.19; <code>configure_work_item_presentation</code> remains experimental, with only
+its field-policy route live-certified (its relations and alert-type-field routes are
+documented build-blocked on 10.2.0.19). All three retain 10.2.0.20 offline-contract
+coverage. DDQ planning requires trusted connection
+evidence; updates also require positive zero-reference evidence. Presentation is
+update-only and formatter references require renderer inventory; legacy <code>CaseType</code>
+is rejected and <code>CaseItemType</code> is never invented. Hierarchy supports create/exact
+reuse only, maps the catalog's <code>emptyHierArray</code> member to the live Axis
+<code>childNodes</code> wire field, and requires
+<code>getBusinessUnitAllHierarchies</code> sole-membership evidence for every reused BU.
+Shared BUs, unknown memberships, updates, removals, and roles are blocked. These
+capabilities do not claim JDBC connection or
+DART report-definition authoring. Official references:
+<a href="https://docs.niceactimize.com/bundle/Actimize_ActOne_10.2_Implementer_Guide/page/Content/Platform/RCM/RCM_DART/DART_Implementation/Defining_the_Database_Connection.htm">DDQ connection</a>
+and <a href="https://docs.niceactimize.com/bundle/Actimize_ActOne_10.2_Extend_Implementer_Guide/page/Content/Platform/ActOne/ActOne_Self_Developers_Guide/Web_Services_for_Business_Hierarchy.htm">business hierarchy</a>.</p>
 </blockquote>
 <h2 id="request-flow-tool-call-to-a-live-actone-instance">Request flow — tool call to a live ActOne instance<a class="headerlink" href="#request-flow-tool-call-to-a-live-actone-instance" title="Permanent link">&para;</a></h2>
 <p>Every tool call travels the <strong>same lifecycle</strong>: an MCP client <code>POST</code>s JSON-RPC to
@@ -2894,6 +2952,33 @@ offline registry — a quick map of the ActOne surface.</p>
 <pre class="mermaid"><code>flowchart TD
     A["list_tags()"] --&gt; REG["_reg().tags() (offline)"]
     REG --&gt; O["result: tags + operation counts"]</code></pre>
+<h3 id="designer-deep-capability-lifecycle-plan-apply-verify">Designer deep-capability lifecycle (<code>plan</code> / <code>apply</code> / <code>verify</code>)<a class="headerlink" href="#designer-deep-capability-lifecycle-plan-apply-verify" title="Permanent link">&para;</a></h3>
+<p>The Designer deep capabilities — work-item families, DDQs, modern presentation, and
+business-unit hierarchies — share <strong>one</strong> <code>plan → apply → verify</code> lifecycle instead
+of a bespoke tool per type. <code>designer_plan</code> composes an ordered, dry-run change set
+(offline: catalog field shapes + grounding + evidence checks); <code>designer_apply</code>
+executes it, but <strong>only if the target build is live-certified</strong> for that capability
+— apply is fail-closed otherwise; <code>designer_verify</code> re-reads the live objects and
+compares them against the plan. Removal (<code>remove_work_item_type</code>) deletes in
+<strong>reverse dependency order</strong> — alert-design objects via the dedicated
+<code>alertDesignService</code> remove operations, then the workflow definition via generic
+<code>removeObject</code>.</p>
+<pre class="mermaid"><code>flowchart TD
+    P["designer_plan(capability, spec, env?)"] --&gt; G["ground: catalog field shape +&lt;br/&gt;designer_describe_type grounding +&lt;br/&gt;evidence (trusted connection,&lt;br/&gt;zero-reference, sole-membership)"]
+    G --&gt; PLAN["ordered change set (dry-run)&lt;br/&gt;references-first · reverse-order deletes"]
+    PLAN --&gt; A["designer_apply(plan, env)"]
+    A --&gt; CERT{build live-certified&lt;br/&gt;for this capability?}
+    CERT --&gt;|no| BLK["error: apply blocked (fail-closed)"]
+    CERT --&gt;|yes| WG{writes enabled for env?}
+    WG --&gt;|no| BLK2["error (gated)"]
+    WG --&gt;|yes| ROUTE{capability route}
+    ROUTE --&gt;|create WIT / DDQ / hierarchy| CRE["ordered SOAP creates&lt;br/&gt;(references before dependents)"]
+    ROUTE --&gt;|remove WIT| REM["alertDesignService remove ops →&lt;br/&gt;removeObject(workflow)&lt;br/&gt;reverse dependency order"]
+    ROUTE --&gt;|presentation| PRE["field-policy route (certified);&lt;br/&gt;relations / alert-type-field&lt;br/&gt;build-blocked → refused"]
+    CRE --&gt; V["designer_verify(plan, env)"]
+    REM --&gt; V
+    PRE --&gt; V
+    V --&gt; O["re-read live objects · diff vs plan ·&lt;br/&gt;report applied / missing / drift"]</code></pre>
 <blockquote>
 <p>Full parameter/return contracts for each tool live in the tool docstrings in
 <code>components/ops/actone_mcp/server.py</code>; the write-gate model is summarized under
@@ -2984,7 +3069,7 @@ confirm-before-write.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.3.16">v0.3.16</a> · <a href="https://github.com/actwise-tools/actwise/commit/216803a">216803a</a>
+      ActWise <a href="https://github.com/actwise-tools/actwise/releases/tag/v0.4.0">v0.4.0</a> · <a href="https://github.com/actwise-tools/actwise/commit/ecdb281">ecdb281</a>
     </div>
   
   
